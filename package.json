@@ -20,6 +20,8 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "eslint": "^7.30.0",
+    "eslint-config-google": "^0.14.0",
     "jest": "^27.0.6"
   }
 }
