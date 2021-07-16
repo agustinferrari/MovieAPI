@@ -48,3 +48,11 @@ test('User already registered login', () =>{
 test('User not registered login', () =>{
   expect(dataAccess.login('jaime@gmail.com', 'superSecurePass')).toBeFalsy();
 });
+
+test('Empty email login', () =>{
+  expect(dataAccess.login('', 'password12345')).toBeFalsy();
+});
+
+test('Empty password login', () =>{
+  expect(dataAccess.login('juanasanchez@gmail.com', '')).toBeFalsy();
+});
