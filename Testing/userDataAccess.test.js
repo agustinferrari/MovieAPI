@@ -56,3 +56,7 @@ test('Empty email login', () =>{
 test('Empty password login', () =>{
   expect(dataAccess.login('juanasanchez@gmail.com', '')).toBeFalsy();
 });
+
+test('Check existency of unexistent user', () =>{
+  expect(dataAccess.exists('juanasanchez@gmail.com')).toBeFalsy();
+});
