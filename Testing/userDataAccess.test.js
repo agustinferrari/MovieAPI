@@ -28,19 +28,11 @@ afterEach(() => {
 
 function usersFileInitialize() {
   dataAccess = new UserDataAccess(pathToUsersFile);
-  fs.writeFileSync(pathToUsersFile, testData, function(err, result) {
-    if (err) {
-      console.log('Error trying to write on ' + pathToUsersFile, err);
-    }
-  });
+  fs.writeFileSync(pathToUsersFile, testData);
 }
 
 function usersFileEmtpy() {
-  fs.writeFileSync(pathToUsersFile, '', function(err, result) {
-    if (err) {
-      console.log('Error trying to write on ' + pathToUsersFile, err);
-    }
-  });
+  fs.writeFileSync(pathToUsersFile, '');
 }
 
 test('User already registered login', () =>{
@@ -83,10 +75,45 @@ test('Register new user', () =>{
     lastName: 'Perez',
     password: 'My1password231',
   };
-  dataAccess.register(newUser);
+  expect(dataAccess.register(newUser)).toBeTruthy();
   const newUserJSON = JSON.stringify(newUser);
-  const expectedData = '['+ userJuanaJSON + userPepeJSON + newUserJSON +']';
+  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +','+ newUserJSON +']';
+  const expectedUsers = JSON.parse(expectedData);
 
   const actualData = fs.readFileSync(pathToUsersFile);
-  expect(actualData).toEqual(expectedData);
+  const actualUsers = JSON.parse(actualData);
+  expect(actualUsers).toEqual(expectedUsers);
 });
+
+test('Register already registered user', () =>{
+  const newUser = {
+    email: 'pepep@gmail.com',
+    firstName: 'Pepe',
+    lastName: 'Gonzales',
+    password: '424pass2343421',
+  };
+  expect(dataAccess.register(newUser)).toBeFalsy();
+  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
+  const expectedUsers = JSON.parse(expectedData);
+
+  const actualData = fs.readFileSync(pathToUsersFile);
+  const actualUsers = JSON.parse(actualData);
+  expect(actualUsers).toEqual(expectedUsers);
+});
+
+test('Register with already used mail', () =>{
+  const newUser = {
+    email: 'pepep@gmail.com',
+    firstName: 'Pepe',
+    lastName: 'Diaz',
+    password: '42fp023431',
+  };
+  expect(dataAccess.register(newUser)).toBeFalsy();
+  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
+  const expectedUsers = JSON.parse(expectedData);
+
+  const actualData = fs.readFileSync(pathToUsersFile);
+  const actualUsers = JSON.parse(actualData);
+  expect(actualUsers).toEqual(expectedUsers);
+});
+
