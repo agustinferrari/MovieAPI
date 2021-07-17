@@ -3,18 +3,20 @@ const {UserDataAccess} = require('./../DataAccess/UserDataAccess.js');
 const pathToUsersFile = 'usersTest.txt';
 let dataAccess;
 
-const testData = '[{' +
-    '"email": "juanasanchez@gmail.com",' +
-    '"firstName": "Juana",' +
-    '"lastName": "Sanchez",' +
-    '"password": "password12345"' +
- '},'+
- '{' +
-    '"email": "pepep@gmail.com",' +
-    '"firstName": "Pepe",' +
-    '"lastName": "Gonzales",' +
-    '"password": "424pass2343421"' +
- '}]';
+const userJuanaJSON = '{' +
+  '"email": "juanasanchez@gmail.com",' +
+  '"firstName": "Juana",' +
+  '"lastName": "Sanchez",' +
+  '"password": "password12345"' +
+ '}';
+const userPepeJSON = '{' +
+  '"email": "pepep@gmail.com",' +
+  '"firstName": "Pepe",' +
+  '"lastName": "Gonzales",' +
+  '"password": "424pass2343421"' +
+'}';
+
+const testData = '['+ userJuanaJSON +','+ userPepeJSON +']';
 
 beforeEach(() => {
   usersFileInitialize();
@@ -45,6 +47,10 @@ test('User already registered login', () =>{
   expect(dataAccess.login('juanasanchez@gmail.com', 'password12345')).toBeTruthy();
 });
 
+test('User already registered login with different capitalization', () =>{
+  expect(dataAccess.login('JUANASANCHEZ@GMAIL.COM', 'password12345')).toBeTruthy();
+});
+
 test('User not registered login', () =>{
   expect(dataAccess.login('jaime@gmail.com', 'superSecurePass')).toBeFalsy();
 });
@@ -67,4 +73,20 @@ test('Check existence of existent user', () =>{
 
 test('Check existence of existent user with different capitalization', () =>{
   expect(dataAccess.exists('pEPEp@gmail.coM')).toBeTruthy();
+});
+
+
+test('Register new user', () =>{
+  const newUser = {
+    email: 'alfp@yahoo.com',
+    firstName: 'Alfredo',
+    lastName: 'Perez',
+    password: 'My1password231',
+  };
+  dataAccess.register(newUser);
+  const newUserJSON = JSON.stringify(newUser);
+  const expectedData = '['+ userJuanaJSON + userPepeJSON + newUserJSON +']';
+
+  const actualData = fs.readFileSync(pathToUsersFile);
+  expect(actualData).toEqual(expectedData);
 });

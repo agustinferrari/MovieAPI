@@ -14,7 +14,8 @@ class UserDataAccess {
     const users = JSON.parse(this.userData);
     for (let i = 0; i < users.length; i++) {
       const userIterator = users[i];
-      if (userIterator.email === emailToCheck && userIterator.password === passwordToCheck) {
+      if (userIterator.email === emailToCheck.toLowerCase() &&
+            userIterator.password === passwordToCheck) {
         return true;
       }
     }
