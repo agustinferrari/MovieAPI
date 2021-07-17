@@ -57,6 +57,14 @@ test('Empty password login', () =>{
   expect(dataAccess.login('juanasanchez@gmail.com', '')).toBeFalsy();
 });
 
-test('Check existency of unexistent user', () =>{
-  expect(dataAccess.exists('juanasanchez@gmail.com')).toBeFalsy();
+test('Check existence of unexistent user', () =>{
+  expect(dataAccess.exists('albertojuan@gmail.com')).toBeFalsy();
+});
+
+test('Check existence of existent user', () =>{
+  expect(dataAccess.exists('pepep@gmail.com')).toBeTruthy();
+});
+
+test('Check existence of existent user with different capitalization', () =>{
+  expect(dataAccess.exists('pEPEp@gmail.coM')).toBeTruthy();
 });

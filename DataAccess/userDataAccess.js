@@ -20,6 +20,18 @@ class UserDataAccess {
     }
     return false;
   }
+
+  exists(emailToCheck) {
+    this.readData();
+    const users = JSON.parse(this.userData);
+    for (let i = 0; i < users.length; i++) {
+      const userIterator = users[i];
+      if (userIterator.email === emailToCheck.toLowerCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 module.exports = {UserDataAccess: UserDataAccess};
