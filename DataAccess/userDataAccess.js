@@ -59,33 +59,41 @@ class UserDataAccess {
         const userFavoriteIterator = this.favorites[i];
         if (userFavoriteIterator.userId === userEmail.toLowerCase()) {
           userHasFavoriteList = true;
-          const userFavorites = userFavoriteIterator.favorites;
-          let favoriteAlreadyAdded = false;
-          for (let j = 0; j < userFavorites.length && !favoriteAlreadyAdded; j++) {
-            const movieIdIterator = userFavorites[j].id;
-            if (movieIdIterator == movie.id) {
-              favoriteAlreadyAdded = true;
-            }
-          }
-          if (!favoriteAlreadyAdded) {
-            userFavorites.push(movie);
-            const newFavoritesJSON = JSON.stringify(this.favorites);
-            fs.writeFileSync(this.pathToFavoriteData, newFavoritesJSON);
-          }
+          this.addMovieToUserFavorites(userFavoriteIterator, movie);
         }
       }
       if (!userHasFavoriteList) {
-        const newFavoriteEntry = {
-          userId: userEmail,
-          favorites: [movie],
-        };
-        this.favorites.push(newFavoriteEntry);
-        const newFavoritesJSON = JSON.stringify(this.favorites);
-        fs.writeFileSync(this.pathToFavoriteData, newFavoritesJSON);
+        this.createUserFavoriteList(userEmail, movie);
       }
       return true;
     }
     return false;
+  }
+
+  addMovieToUserFavorites(userFavoriteList, movie) {
+    const userFavorites = userFavoriteList.favorites;
+    let favoriteAlreadyAdded = false;
+    for (let j = 0; j < userFavorites.length && !favoriteAlreadyAdded; j++) {
+      const movieIdIterator = userFavorites[j].id;
+      if (movieIdIterator == movie.id) {
+        favoriteAlreadyAdded = true;
+      }
+    }
+    if (!favoriteAlreadyAdded) {
+      userFavorites.push(movie);
+      const newFavoritesJSON = JSON.stringify(this.favorites);
+      fs.writeFileSync(this.pathToFavoriteData, newFavoritesJSON);
+    }
+  }
+
+  createUserFavoriteList(userEmail, movie) {
+    const newFavoriteEntry = {
+      userId: userEmail,
+      favorites: [movie],
+    };
+    this.favorites.push(newFavoriteEntry);
+    const newFavoritesJSON = JSON.stringify(this.favorites);
+    fs.writeFileSync(this.pathToFavoriteData, newFavoritesJSON);
   }
 }
 
