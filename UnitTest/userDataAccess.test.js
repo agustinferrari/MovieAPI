@@ -1,14 +1,15 @@
 const fs = require('fs');
 const {UserDataAccess} = require('./../DataAccess/UserDataAccess.js');
 const pathToUsersFile = './UnitTest/usersTest.txt';
-const pathToFavoritesFile = './UnitTest/usersTest.txt';
+const pathToFavoritesFile = './UnitTest/favoritesTest.txt';
 let userDataAccess;
 
 const movie1 = '{"original_title": "Mikes New Car", "genre_ids": [ 16, 10751 ], "id": 13931}';
 const movie2 = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133}';
+const movie3 = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423}';
 
-const movieTestData = '[{"user": "juanasanchez@gmail.com",'+
-  '+"favorites":['+ movie1 +','+ movie2 +']}]';
+const favoriteTestData = '[{"userId": "juanasanchez@gmail.com",'+
+  '"favorites":['+ movie1 +','+ movie2 +']}]';
 
 const userJuanaJSON = '{' +
   '"email": "juanasanchez@gmail.com",' +
@@ -26,22 +27,22 @@ const userPepeJSON = '{' +
 const userTestData = '['+ userJuanaJSON +','+ userPepeJSON +']';
 
 beforeEach(() => {
-  usersFileInitialize();
+  testFilesInitialize();
 });
 
 afterEach(() => {
-  usersFileEmtpy();
+  testFilesEmtpy();
 });
 
-function usersFileInitialize() {
-  userDataAccess = new UserDataAccess(pathToUsersFile);
-  favoriteDataAcess = new FavoriteDataAccess(pathToFavoritesFile);
+function testFilesInitialize() {
+  userDataAccess = new UserDataAccess(pathToUsersFile, pathToFavoritesFile);
   fs.writeFileSync(pathToUsersFile, userTestData);
-  fs.writeFileSync(pathToFavoritesFile, userTestData);
+  fs.writeFileSync(pathToFavoritesFile, favoriteTestData);
 }
 
-function usersFileEmtpy() {
+function testFilesEmtpy() {
   fs.writeFileSync(pathToUsersFile, '');
+  fs.writeFileSync(pathToFavoritesFile, '');
 }
 
 test('User already registered login', () =>{
@@ -126,12 +127,47 @@ test('Register with already used mail', () =>{
   expect(actualUsers).toEqual(expectedUsers);
 });
 
-test('Add favorite movie to certain user', () =>{
-  expect(favoriteDataAcess.add('pepep@gmail.com', movie)).toBeTruthy();
-  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
-  const expectedUsers = JSON.parse(expectedData);
+test('Add favorite movie to existent user without favorites', () =>{
+  const movieObject1 = JSON.parse(movie1);
+  expect(userDataAccess.addFavorite('pepep@gmail.com', movieObject1)).toBeTruthy();
+  const expectedData = '[{"userId": "juanasanchez@gmail.com",' +
+  '"favorites":['+ movie1 +','+ movie2 +']},' +
+  '{"userId": "pepep@gmail.com",' +
+  '"favorites":['+ movie1 +']}]';
+  const expectedFavorites = JSON.parse(expectedData);
 
   const actualData = fs.readFileSync(pathToFavoritesFile);
-  const actualUsers = JSON.parse(actualData);
-  expect(actualUsers).toEqual(expectedUsers);
+  const actualFavorites = JSON.parse(actualData);
+  expect(actualFavorites).toEqual(expectedFavorites);
 });
+
+test('Add favorite movie nonexistent user', () =>{
+  const movieObject3 = JSON.parse(movie3);
+  expect(userDataAccess.addFavorite('mario@gmail.com', movieObject3)).toBeFalsy();
+});
+
+test('Add favorite movie to existent user with favorites', () =>{
+  const movieObject3 = JSON.parse(movie3);
+  expect(userDataAccess.addFavorite('juanasanchez@gmail.com', movieObject3)).toBeTruthy();
+  const expectedData = '[{"userId": "juanasanchez@gmail.com",' +
+  '"favorites":['+ movie1 +','+ movie2 +','+ movie3 +']}]';
+  const expectedFavorites = JSON.parse(expectedData);
+
+  const actualData = fs.readFileSync(pathToFavoritesFile);
+  const actualFavorites = JSON.parse(actualData);
+  expect(actualFavorites).toEqual(expectedFavorites);
+});
+
+test('Add repeated favorite movie to existent user', () =>{
+  const movieObject2 = JSON.parse(movie2);
+  expect(userDataAccess.addFavorite('juanasanchez@gmail.com', movieObject2)).toBeTruthy();
+  const expectedData = '[{"userId": "juanasanchez@gmail.com",' +
+  '"favorites":['+ movie1 +','+ movie2 +']}]';
+  const expectedFavorites = JSON.parse(expectedData);
+
+  const actualData = fs.readFileSync(pathToFavoritesFile);
+  const actualFavorites = JSON.parse(actualData);
+  expect(actualFavorites).toEqual(expectedFavorites);
+});
+
+
