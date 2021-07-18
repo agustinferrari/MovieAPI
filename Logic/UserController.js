@@ -1,5 +1,6 @@
 class UserController {
   constructor() {
+    this.sessionArray = [];
   }
 
   generateToken() {
@@ -11,6 +12,26 @@ class UserController {
       tokenArray[i] = charArray[j];
     }
     return tokenArray.join('');
+  }
+
+  addSession(userEmail) {
+    const newToken = this.generateToken();
+    let userAlreadyInSession = false;
+    for (let i = 0; i < this.sessionArray.length; i++) {
+      const sessionIterator = this.sessionArray[i];
+      if (sessionIterator.userId === userEmail) {
+        userAlreadyInSession = true;
+        sessionIterator.token = newToken;
+      }
+    }
+
+    if (!userAlreadyInSession) {
+      const sessionEntry = {
+        userId: userEmail,
+        token: newToken,
+      };
+      this.sessionArray.push(sessionEntry);
+    }
   }
 }
 
