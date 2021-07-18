@@ -1,7 +1,14 @@
 const fs = require('fs');
 const {UserDataAccess} = require('./../DataAccess/UserDataAccess.js');
-const pathToUsersFile = 'usersTest.txt';
-let dataAccess;
+const pathToUsersFile = './UnitTest/usersTest.txt';
+const pathToFavoritesFile = './UnitTest/usersTest.txt';
+let userDataAccess;
+
+const movie1 = '{"original_title": "Mikes New Car", "genre_ids": [ 16, 10751 ], "id": 13931}';
+const movie2 = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133}';
+
+const movieTestData = '[{"user": "juanasanchez@gmail.com",'+
+  '+"favorites":['+ movie1 +','+ movie2 +']}]';
 
 const userJuanaJSON = '{' +
   '"email": "juanasanchez@gmail.com",' +
@@ -16,7 +23,7 @@ const userPepeJSON = '{' +
   '"password": "424pass2343421"' +
 '}';
 
-const testData = '['+ userJuanaJSON +','+ userPepeJSON +']';
+const userTestData = '['+ userJuanaJSON +','+ userPepeJSON +']';
 
 beforeEach(() => {
   usersFileInitialize();
@@ -27,8 +34,10 @@ afterEach(() => {
 });
 
 function usersFileInitialize() {
-  dataAccess = new UserDataAccess(pathToUsersFile);
-  fs.writeFileSync(pathToUsersFile, testData);
+  userDataAccess = new UserDataAccess(pathToUsersFile);
+  favoriteDataAcess = new FavoriteDataAccess(pathToFavoritesFile);
+  fs.writeFileSync(pathToUsersFile, userTestData);
+  fs.writeFileSync(pathToFavoritesFile, userTestData);
 }
 
 function usersFileEmtpy() {
@@ -36,35 +45,35 @@ function usersFileEmtpy() {
 }
 
 test('User already registered login', () =>{
-  expect(dataAccess.login('juanasanchez@gmail.com', 'password12345')).toBeTruthy();
+  expect(userDataAccess.login('juanasanchez@gmail.com', 'password12345')).toBeTruthy();
 });
 
 test('User already registered login with different capitalization', () =>{
-  expect(dataAccess.login('JUANASANCHEZ@GMAIL.COM', 'password12345')).toBeTruthy();
+  expect(userDataAccess.login('JUANASANCHEZ@GMAIL.COM', 'password12345')).toBeTruthy();
 });
 
 test('User not registered login', () =>{
-  expect(dataAccess.login('jaime@gmail.com', 'superSecurePass')).toBeFalsy();
+  expect(userDataAccess.login('jaime@gmail.com', 'superSecurePass')).toBeFalsy();
 });
 
 test('Empty email login', () =>{
-  expect(dataAccess.login('', 'password12345')).toBeFalsy();
+  expect(userDataAccess.login('', 'password12345')).toBeFalsy();
 });
 
 test('Empty password login', () =>{
-  expect(dataAccess.login('juanasanchez@gmail.com', '')).toBeFalsy();
+  expect(userDataAccess.login('juanasanchez@gmail.com', '')).toBeFalsy();
 });
 
 test('Check existence of unexistent user', () =>{
-  expect(dataAccess.exists('albertojuan@gmail.com')).toBeFalsy();
+  expect(userDataAccess.exists('albertojuan@gmail.com')).toBeFalsy();
 });
 
 test('Check existence of existent user', () =>{
-  expect(dataAccess.exists('pepep@gmail.com')).toBeTruthy();
+  expect(userDataAccess.exists('pepep@gmail.com')).toBeTruthy();
 });
 
 test('Check existence of existent user with different capitalization', () =>{
-  expect(dataAccess.exists('pEPEp@gmail.coM')).toBeTruthy();
+  expect(userDataAccess.exists('pEPEp@gmail.coM')).toBeTruthy();
 });
 
 
@@ -75,7 +84,7 @@ test('Register new user', () =>{
     lastName: 'Perez',
     password: 'My1password231',
   };
-  expect(dataAccess.register(newUser)).toBeTruthy();
+  expect(userDataAccess.register(newUser)).toBeTruthy();
   const newUserJSON = JSON.stringify(newUser);
   const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +','+ newUserJSON +']';
   const expectedUsers = JSON.parse(expectedData);
@@ -92,7 +101,7 @@ test('Register already registered user', () =>{
     lastName: 'Gonzales',
     password: '424pass2343421',
   };
-  expect(dataAccess.register(newUser)).toBeFalsy();
+  expect(userDataAccess.register(newUser)).toBeFalsy();
   const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
   const expectedUsers = JSON.parse(expectedData);
 
@@ -108,7 +117,7 @@ test('Register with already used mail', () =>{
     lastName: 'Diaz',
     password: '42fp023431',
   };
-  expect(dataAccess.register(newUser)).toBeFalsy();
+  expect(userDataAccess.register(newUser)).toBeFalsy();
   const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
   const expectedUsers = JSON.parse(expectedData);
 
@@ -117,3 +126,12 @@ test('Register with already used mail', () =>{
   expect(actualUsers).toEqual(expectedUsers);
 });
 
+test('Add favorite movie to certain user', () =>{
+  expect(favoriteDataAcess.add('pepep@gmail.com', movie)).toBeTruthy();
+  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
+  const expectedUsers = JSON.parse(expectedData);
+
+  const actualData = fs.readFileSync(pathToFavoritesFile);
+  const actualUsers = JSON.parse(actualData);
+  expect(actualUsers).toEqual(expectedUsers);
+});
