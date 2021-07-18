@@ -160,3 +160,9 @@ function checkFavoriteTextfileIsCorrect(expectedData) {
   expect(actualFavorites).toEqual(expectedFavorites);
 }
 
+test('Get user favorites (with at least one favorite movie)', () =>{
+  const favortites = userDataAccess.getFavorites('juanasanchez@gmail.com');
+  const expectedData = movie1 +','+ movie2;
+  checkFavoriteTextfileIsCorrect(expectedData);
+});
+
