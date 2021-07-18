@@ -160,9 +160,20 @@ function checkFavoriteTextfileIsCorrect(expectedData) {
   expect(actualFavorites).toEqual(expectedFavorites);
 }
 
-test('Get user favorites (with at least one favorite movie)', () =>{
-  const favortites = userDataAccess.getFavorites('juanasanchez@gmail.com');
-  const expectedData = movie1 +','+ movie2;
-  checkFavoriteTextfileIsCorrect(expectedData);
+test('Get user favorites with at least one favorite movie', () =>{
+  getFavoritesTest('juanasanchez@gmail.com', '[' + movie1 +','+ movie2 + ']');
 });
 
+test('Get user favorites with no favorite movies', () =>{
+  getFavoritesTest('pepep@gmail.com', '[]');
+});
+
+test('Get favorites from unregistered user ', () =>{
+  getFavoritesTest('mario@gmail.com', '[]');
+});
+
+function getFavoritesTest(userEmail, expectedData) {
+  const favorites = userDataAccess.getFavorites(userEmail);
+  const expectedFavorites = JSON.parse(expectedData);
+  expect(favorites).toEqual(expectedFavorites);
+}

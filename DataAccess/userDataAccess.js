@@ -54,24 +54,24 @@ class UserDataAccess {
   addFavorite(userEmail, movie) {
     this.readUserFavoriteData();
     if (this.exists(userEmail)) {
-      let userHasFavoriteList = false;
-      for (let i = 0; i < this.favorites.length && !userHasFavoriteList; i++) {
+      let userHasFavoriteArray = false;
+      for (let i = 0; i < this.favorites.length && !userHasFavoriteArray; i++) {
         const userFavoriteIterator = this.favorites[i];
         if (userFavoriteIterator.userId === userEmail.toLowerCase()) {
-          userHasFavoriteList = true;
+          userHasFavoriteArray = true;
           this.addMovieToUserFavorites(userFavoriteIterator, movie);
         }
       }
-      if (!userHasFavoriteList) {
-        this.createUserFavoriteList(userEmail, movie);
+      if (!userHasFavoriteArray) {
+        this.createUserFavoriteArray(userEmail, movie);
       }
       return true;
     }
     return false;
   }
 
-  addMovieToUserFavorites(userFavoriteList, movie) {
-    const userFavorites = userFavoriteList.favorites;
+  addMovieToUserFavorites(userFavoriteArray, movie) {
+    const userFavorites = userFavoriteArray.favorites;
     let favoriteAlreadyAdded = false;
     for (let j = 0; j < userFavorites.length && !favoriteAlreadyAdded; j++) {
       const movieIdIterator = userFavorites[j].id;
@@ -86,7 +86,7 @@ class UserDataAccess {
     }
   }
 
-  createUserFavoriteList(userEmail, movie) {
+  createUserFavoriteArray(userEmail, movie) {
     const newFavoriteEntry = {
       userId: userEmail,
       favorites: [movie],
@@ -94,6 +94,19 @@ class UserDataAccess {
     this.favorites.push(newFavoriteEntry);
     const newFavoritesJSON = JSON.stringify(this.favorites);
     fs.writeFileSync(this.pathToFavoriteData, newFavoritesJSON);
+  }
+
+  getFavorites(userEmail) {
+    this.readUserFavoriteData();
+    if (this.exists(userEmail)) {
+      for (let i = 0; i < this.favorites.length; i++) {
+        const userFavoriteIterator = this.favorites[i];
+        if (userFavoriteIterator.userId === userEmail.toLowerCase()) {
+          return userFavoriteIterator.favorites;
+        }
+      }
+    }
+    return [];
   }
 }
 
