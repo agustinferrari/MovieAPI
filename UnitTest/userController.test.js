@@ -43,9 +43,14 @@ function countSessionTest(email, expectedCount) {
   expect(userInSessionArrayCount).toBe(expectedCount);
 }
 
-test('Remove session', () =>{
+test('Remove session in array', () =>{
   userController.removeSession('pepep@gmail.com');
   countSessionTest('pepep@gmail.com', 0);
+});
+
+test('Remove session not in array', () =>{
+  userController.removeSession('mariogaspar@gmail.com');
+  countSessionTest('mariogaspar@gmail.com', 0);
 });
 
 describe('Testing using local data', () =>{
