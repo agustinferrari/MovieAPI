@@ -57,6 +57,11 @@ class UserController {
   register(user) {
     return this.userDataAccess.register(user);
   }
+
+  addFavorite(user, movie) {
+    movie.addedAt = new Date().toISOString().slice(0, 10);
+    return this.userDataAccess.addFavorite(user.email, movie);
+  }
 }
 
 module.exports = {UserController: UserController};

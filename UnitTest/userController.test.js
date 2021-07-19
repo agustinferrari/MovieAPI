@@ -165,7 +165,23 @@ describe('Add favorite tests', () =>{
     movieWithAddedAt.addedAt = new Date().toISOString().slice(0, 10);
     spy.mockReturnValue(true);
     expect(userController.addFavorite(registerdUser, movieWithoutAddedAt)).toBeTruthy();
-    const callParameters = spy.mock.calls[0][0];
+    const callParameters = spy.mock.calls[0][1];
+    expect(callParameters).toBe(movieWithAddedAt);
+  });
+
+  test('Add favorite movie to unregistered user', () => {
+    const registerdUser = {
+      email: 'marioalberto@gmail.com',
+      firstName: 'Mario',
+      lastName: 'Alberto',
+      password: '3434PassMarioAlb',
+    };
+    const movieWithoutAddedAt = JSON.parse(testData.movieWithoutAddedAt);
+    const movieWithAddedAt = movieWithoutAddedAt;
+    movieWithAddedAt.addedAt = new Date().toISOString().slice(0, 10);
+    spy.mockReturnValue(false);
+    expect(userController.addFavorite(registerdUser, movieWithoutAddedAt)).toBeFalsy();
+    const callParameters = spy.mock.calls[0][1];
     expect(callParameters).toBe(movieWithAddedAt);
   });
 });
