@@ -1,49 +1,23 @@
 const fs = require('fs');
 const {UserDataAccess} = require('./../DataAccess/UserDataAccess.js');
+const {TestData} = require('./Utils/TestData.js');
 const pathToUsersFile = './UnitTest/usersTest.txt';
 const pathToFavoritesFile = './UnitTest/favoritesTest.txt';
 let userDataAccess;
+let testData;
 
-const movie1 = '{"original_title": "Mikes New Car", "genre_ids": [ 16, 10751 ], "id": 13931}';
-const movie2 = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133}';
-const movie3 = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423}';
-
-const favoriteTestData = '[{"userId": "juanasanchez@gmail.com",'+
-  '"favorites":['+ movie1 +','+ movie2 +']}]';
-
-const userJuanaJSON = '{' +
-  '"email": "juanasanchez@gmail.com",' +
-  '"firstName": "Juana",' +
-  '"lastName": "Sanchez",' +
-  '"password": "password12345"' +
- '}';
-const userPepeJSON = '{' +
-  '"email": "pepep@gmail.com",' +
-  '"firstName": "Pepe",' +
-  '"lastName": "Gonzales",' +
-  '"password": "424pass2343421"' +
-'}';
-
-const userTestData = '['+ userJuanaJSON +','+ userPepeJSON +']';
+beforeAll(() => {
+  testData = new TestData();
+  userDataAccess = new UserDataAccess(pathToUsersFile, pathToFavoritesFile);
+});
 
 beforeEach(() => {
-  testFilesInitialize();
+  testData.testFilesInitialize();
 });
 
 afterEach(() => {
-  testFilesEmtpy();
+  testData.testFilesEmtpy();
 });
-
-function testFilesInitialize() {
-  userDataAccess = new UserDataAccess(pathToUsersFile, pathToFavoritesFile);
-  fs.writeFileSync(pathToUsersFile, userTestData);
-  fs.writeFileSync(pathToFavoritesFile, favoriteTestData);
-}
-
-function testFilesEmtpy() {
-  fs.writeFileSync(pathToUsersFile, '');
-  fs.writeFileSync(pathToFavoritesFile, '');
-}
 
 test('User already registered login', () =>{
   expect(userDataAccess.login('juanasanchez@gmail.com', 'password12345')).toBeTruthy();
@@ -87,7 +61,7 @@ test('Register new user', () =>{
   };
   expect(userDataAccess.register(newUser)).toBeTruthy();
   const newUserJSON = JSON.stringify(newUser);
-  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +','+ newUserJSON +']';
+  const expectedData = '['+testData.userJuanaJSON+','+testData.userPepeJSON +','+ newUserJSON+']';
   checkUserTextfileIsCorrect(expectedData);
 });
 
@@ -99,7 +73,7 @@ test('Register already registered user', () =>{
     password: '424pass2343421',
   };
   expect(userDataAccess.register(newUser)).toBeFalsy();
-  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
+  const expectedData = '['+ testData.userJuanaJSON +','+ testData.userPepeJSON +']';
   checkUserTextfileIsCorrect(expectedData);
 });
 
@@ -111,7 +85,7 @@ test('Register with already used mail', () =>{
     password: '42fp023431',
   };
   expect(userDataAccess.register(newUser)).toBeFalsy();
-  const expectedData = '['+ userJuanaJSON +','+ userPepeJSON +']';
+  const expectedData = '['+ testData.userJuanaJSON +','+ testData.userPepeJSON +']';
   checkUserTextfileIsCorrect(expectedData);
 });
 
@@ -123,33 +97,33 @@ function checkUserTextfileIsCorrect(expectedData) {
 }
 
 test('Add favorite movie to existent user without favorites', () =>{
-  const movieObject1 = JSON.parse(movie1);
+  const movieObject1 = JSON.parse(testData.movie1);
   expect(userDataAccess.addFavorite('pepep@gmail.com', movieObject1)).toBeTruthy();
   const expectedData = '[{"userId": "juanasanchez@gmail.com",' +
-  '"favorites":['+ movie1 +','+ movie2 +']},' +
+  '"favorites":['+ testData.movie1 +','+ testData.movie2 +']},' +
   '{"userId": "pepep@gmail.com",' +
-  '"favorites":['+ movie1 +']}]';
+  '"favorites":['+ testData.movie1 +']}]';
   checkFavoriteTextfileIsCorrect(expectedData);
 });
 
 test('Add favorite movie nonexistent user', () =>{
-  const movieObject3 = JSON.parse(movie3);
+  const movieObject3 = JSON.parse(testData.movie3);
   expect(userDataAccess.addFavorite('mario@gmail.com', movieObject3)).toBeFalsy();
 });
 
 test('Add favorite movie to existent user with favorites', () =>{
-  const movieObject3 = JSON.parse(movie3);
+  const movieObject3 = JSON.parse(testData.movie3);
   expect(userDataAccess.addFavorite('juanasanchez@gmail.com', movieObject3)).toBeTruthy();
   const expectedData = '[{"userId": "juanasanchez@gmail.com",' +
-  '"favorites":['+ movie1 +','+ movie2 +','+ movie3 +']}]';
+  '"favorites":['+ testData.movie1 +','+ testData.movie2 +','+ testData.movie3 +']}]';
   checkFavoriteTextfileIsCorrect(expectedData);
 });
 
 test('Add repeated favorite movie to existent user', () =>{
-  const movieObject2 = JSON.parse(movie2);
+  const movieObject2 = JSON.parse(testData.movie2);
   expect(userDataAccess.addFavorite('juanasanchez@gmail.com', movieObject2)).toBeTruthy();
   const expectedData = '[{"userId": "juanasanchez@gmail.com",' +
-  '"favorites":['+ movie1 +','+ movie2 +']}]';
+  '"favorites":['+ testData.movie1 +','+ testData.movie2 +']}]';
   checkFavoriteTextfileIsCorrect(expectedData);
 });
 
@@ -161,7 +135,7 @@ function checkFavoriteTextfileIsCorrect(expectedData) {
 }
 
 test('Get user favorites with at least one favorite movie', () =>{
-  getFavoritesTest('juanasanchez@gmail.com', '[' + movie1 +','+ movie2 + ']');
+  getFavoritesTest('juanasanchez@gmail.com', '[' + testData.movie1 +','+ testData.movie2 + ']');
 });
 
 test('Get user favorites with no favorite movies', () =>{
