@@ -78,7 +78,7 @@ describe('Testing using local data', () =>{
       password: 'password12345',
     };
     expect(userController.login(user.email, user.password)).toBeTruthy();
-    checkLoginSessionTest(user, 1);
+    countSessionTest(user.email, 1);
   });
 
   test('Login already logged in user', () =>{
@@ -87,7 +87,7 @@ describe('Testing using local data', () =>{
       password: '424pass2343421',
     };
     expect(userController.login(user.email, user.password)).toBeTruthy();
-    checkLoginSessionTest(user, 1);
+    countSessionTest(user.email, 1);
   });
 
   test('Login unregistered user', () =>{
@@ -96,21 +96,16 @@ describe('Testing using local data', () =>{
       password: '343423cxtrp213',
     };
     expect(userController.login(user.email, user.password)).toBeFalsy();
-    checkLoginSessionTest(user, 0);
+    countSessionTest(user.email, 0);
   });
 
-  function checkLoginSessionTest(user, expectedSessionArrayCount) {
-    const sessionArray = userController.sessionArray;
-    let userInSessionArrayCount = 0;
-    for (let i = 0; i < sessionArray.length; i++) {
-      const sessionIterator = sessionArray[i];
-      if (sessionIterator.userId === user.email) {
-        userInSessionArrayCount++;
-        checkTokenValidity(sessionIterator.token);
-      }
-    }
-    expect(userInSessionArrayCount).toBe(expectedSessionArrayCount);
-  }
+
+  test('Logout token in session', () =>{
+    const token = userController.sessionArray[0].token;
+    const email = userController.sessionArray[0].userId;
+    userController.logout(token);
+    countSessionTest(user.email, 0);
+  });
 });
 
 
