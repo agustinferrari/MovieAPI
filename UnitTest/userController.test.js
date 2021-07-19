@@ -43,23 +43,18 @@ function countSessionTest(email, expectedCount) {
   expect(userInSessionArrayCount).toBe(expectedCount);
 }
 
-describe('Testing using local data', () =>{
-  const {TestData} = require('./utils/TestData.js');
-  let testData;
-
-  beforeAll(() =>{
-    testData = new TestData();
-  });
+describe('Login/Logout tests', () =>{
+  let spy;
 
   beforeEach(() => {
-    testData.testFilesInitialize();
     userController = new UserController();
-    userController.userDataAccess = new UserDataAccess(pathToUsersFile, pathToFavoritesFile);
+    spy = jest.spyOn(userController.userDataAccess, 'login');
+    spy.mockReturnValue(true);
     userController.login('pepep@gmail.com', '424pass2343421');
   });
 
   afterEach(() => {
-    testData.testFilesEmtpy();
+    spy.mockRestore();
   });
 
   test('Login registered user', () =>{
@@ -85,6 +80,7 @@ describe('Testing using local data', () =>{
       email: 'mariogaspar@gmail.com',
       password: '343423cxtrp213',
     };
+    spy.mockReturnValue(false);
     expect(userController.login(user.email, user.password)).toBeFalsy();
     countSessionTest(user.email, 0);
   });
@@ -104,4 +100,38 @@ describe('Testing using local data', () =>{
   });
 });
 
+describe('Register tests', () =>{
+  let spy;
+
+  beforeEach(() => {
+    userController = new UserController();
+    spy = jest.spyOn(userController.userDataAccess, 'register');
+  });
+
+  afterEach(() => {
+    spy.mockRestore();
+  });
+
+  test('Register unregistered user', () => {
+    const newUser = {
+      email: 'alfp@yahoo.com',
+      firstName: 'Alfredo',
+      lastName: 'Perez',
+      password: 'My1password231',
+    };
+    spy.mockReturnValue(true);
+    expect(userController.register(newUser)).toBeTruthy();
+  });
+
+  test('Register registered user', () => {
+    const newUser = {
+      email: 'pepep@gmail.com',
+      firstName: 'Pepe',
+      lastName: 'Gonzales',
+      password: '424pass2343421',
+    };
+    spy.mockReturnValue(false);
+    expect(userController.register(newUser)).toBeFalsy();
+  });
+});
 

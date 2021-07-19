@@ -53,6 +53,10 @@ class UserController {
       }
     }
   }
+
+  register(user) {
+    return this.userDataAccess.register(user);
+  }
 }
 
 module.exports = {UserController: UserController};
