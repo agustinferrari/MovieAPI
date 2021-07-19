@@ -21,15 +21,16 @@ function checkTokenValidity(token) {
 }
 
 test('Add registered user session', () =>{
-  addSessionTest('juanasanchez@gmail.com');
+  userController.addSession('juanasanchez@gmail.com');
+  countSessionTest('juanasanchez@gmail.com', 1);
 });
 
 test('Add user duplicated session', () =>{
-  addSessionTest('pepep@gmail.com');
+  userController.addSession('pepep@gmail.com');
+  countSessionTest('pepep@gmail.com', 1);
 });
 
-function addSessionTest(email) {
-  userController.addSession(email);
+function countSessionTest(email, expectedCount) {
   const sessionArray = userController.sessionArray;
   let userInSessionArrayCount = 0;
   for (let i = 0; i < sessionArray.length; i++) {
@@ -39,8 +40,13 @@ function addSessionTest(email) {
       checkTokenValidity(sessionIterator.token);
     }
   }
-  expect(userInSessionArrayCount).toBe(1);
+  expect(userInSessionArrayCount).toBe(expectedCount);
 }
+
+test('Remove session', () =>{
+  userController.removeSession('pepep@gmail.com');
+  countSessionTest('pepep@gmail.com', 0);
+});
 
 describe('Testing using local data', () =>{
   const {TestData} = require('./utils/TestData.js');
