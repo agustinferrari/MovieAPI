@@ -1,6 +1,6 @@
 const fs = require('fs');
-const pathToUsersFile = './UnitTest/usersTest.txt';
-const pathToFavoritesFile = './UnitTest/favoritesTest.txt';
+const pathToUsersFile = './unitTest/usersTest.txt';
+const pathToFavoritesFile = './unitTest/favoritesTest.txt';
 
 class TestData {
   constructor() {

@@ -1,8 +1,8 @@
 const fs = require('fs');
-const {UserDataAccess} = require('./../DataAccess/UserDataAccess.js');
-const {TestData} = require('./Utils/TestData.js');
-const pathToUsersFile = './UnitTest/usersTest.txt';
-const pathToFavoritesFile = './UnitTest/favoritesTest.txt';
+const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+const {TestData} = require('./utils/testData.js');
+const pathToUsersFile = './unitTest/usersTest.txt';
+const pathToFavoritesFile = './unitTest/favoritesTest.txt';
 let userDataAccess;
 let testData;
 

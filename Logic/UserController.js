@@ -1,6 +1,9 @@
+const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+
 class UserController {
   constructor() {
     this.sessionArray = [];
+    this.userDataAccess = new UserDataAccess('./users.txt', './favorites.txt');
   }
 
   generateToken() {
@@ -32,6 +35,14 @@ class UserController {
       };
       this.sessionArray.push(sessionEntry);
     }
+  }
+
+  login(userEmail, userPassword) {
+    if (this.userDataAccess.login(userEmail, userPassword)) {
+      this.addSession(userEmail);
+      return true;
+    }
+    return false;
   }
 }
 

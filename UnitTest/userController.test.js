@@ -1,20 +1,13 @@
-const {UserController} = require('./../Logic/UserController.js');
-const {TestData} = require('./Utils/TestData.js');
+const {UserController} = require('./../logic/userController.js');
+const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+const pathToUsersFile = './unitTest/usersTest.txt';
+const pathToFavoritesFile = './unitTest/favoritesTest.txt';
 let userController;
-let testData;
-
-beforeAll(() => {
-  testData = new TestData();
-});
 
 beforeEach(() => {
-  testData.testFilesInitialize();
   userController = new UserController();
+  userController.userDataAccess = new UserDataAccess(pathToUsersFile, pathToFavoritesFile);
   userController.addSession('pepep@gmail.com');
-});
-
-afterEach(() => {
-  testData.testFilesEmtpy();
 });
 
 test('Generate token is alphanumeric and 20 characters long', () =>{
@@ -50,23 +43,63 @@ function addSessionTest(email) {
 }
 
 describe('Testing using local data', () =>{
+  const {TestData} = require('./utils/TestData.js');
+  let testData;
+
+  beforeAll(() =>{
+    testData = new TestData();
+  });
+
+  beforeEach(() => {
+    testData.testFilesInitialize();
+    userController = new UserController();
+    userController.userDataAccess = new UserDataAccess(pathToUsersFile, pathToFavoritesFile);
+    userController.login('pepep@gmail.com', '424pass2343421');
+  });
+
+  afterEach(() => {
+    testData.testFilesEmtpy();
+  });
+
   test('Login registered user', () =>{
+    const user = {
+      email: 'juanasanchez@gmail.com',
+      password: 'password12345',
+    };
+    expect(userController.login(user.email, user.password)).toBeTruthy();
+    checkLoginSessionTest(user, 1);
+  });
+
+  test('Login already logged in user', () =>{
     const user = {
       email: 'pepep@gmail.com',
       password: '424pass2343421',
     };
-    expect(userController.login(user)).toBeTruthy();
+    expect(userController.login(user.email, user.password)).toBeTruthy();
+    checkLoginSessionTest(user, 1);
+  });
+
+  test('Login unregistered user', () =>{
+    const user = {
+      email: 'mariogaspar@gmail.com',
+      password: '343423cxtrp213',
+    };
+    expect(userController.login(user.email, user.password)).toBeFalsy();
+    checkLoginSessionTest(user, 0);
+  });
+
+  function checkLoginSessionTest(user, expectedSessionArrayCount) {
     const sessionArray = userController.sessionArray;
     let userInSessionArrayCount = 0;
     for (let i = 0; i < sessionArray.length; i++) {
       const sessionIterator = sessionArray[i];
-      if (sessionIterator.userId === email) {
+      if (sessionIterator.userId === user.email) {
         userInSessionArrayCount++;
         checkTokenValidity(sessionIterator.token);
       }
     }
-    expect(userInSessionArrayCount).toBe(1);
-  });
+    expect(userInSessionArrayCount).toBe(expectedSessionArrayCount);
+  }
 });
 
 
