@@ -1,5 +1,6 @@
 const {UserController} = require('./../logic/userController.js');
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+const {TestData} = require('./utils/testData.js');
 const pathToUsersFile = './unitTest/usersTest.txt';
 const pathToFavoritesFile = './unitTest/favoritesTest.txt';
 let userController;
@@ -134,4 +135,39 @@ describe('Register tests', () =>{
     expect(userController.register(newUser)).toBeFalsy();
   });
 });
+
+describe('Add favorite tests', () =>{
+  let spy;
+  let testData;
+
+  beforeAll(() => {
+    testData = new TestData();
+  });
+
+  beforeEach(() => {
+    userController = new UserController();
+    spy = jest.spyOn(userController.userDataAccess, 'addFavorite');
+  });
+
+  afterEach(() => {
+    spy.mockRestore();
+  });
+
+  test('Add favorite movie to registered user', () => {
+    const registerdUser = {
+      email: 'pepep@gmail.com',
+      firstName: 'Pepe',
+      lastName: 'Gonzales',
+      password: '424pass2343421',
+    };
+    const movieWithoutAddedAt = JSON.parse(testData.movieWithoutAddedAt);
+    const movieWithAddedAt = movieWithoutAddedAt;
+    movieWithAddedAt.addedAt = new Date().toISOString().slice(0, 10);
+    spy.mockReturnValue(true);
+    expect(userController.addFavorite(registerdUser, movieWithoutAddedAt)).toBeTruthy();
+    const callParameters = spy.mock.calls[0][0];
+    expect(callParameters).toBe(movieWithAddedAt);
+  });
+});
+
 

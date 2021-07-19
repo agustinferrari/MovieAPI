@@ -4,9 +4,13 @@ const pathToFavoritesFile = './unitTest/favoritesTest.txt';
 
 class TestData {
   constructor() {
-    this.movie1 = '{"original_title": "Mikes New Car", "genre_ids": [ 16, 10751 ], "id": 13931}';
-    this.movie2 = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133}';
-    this.movie3 = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423}';
+    this.movie1 = '{"original_title": "Mikes New Car", "genre_ids": [ 16, 10751 ], "id": 13931,'+
+    ' "addedAt" : "2021-07-19"}';
+    this.movie2 = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133,'+
+    ' "addedAt" : "2021-02-16"}';
+    this.movie3 = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423,'+
+    ' "addedAt" : "2021-03-17"}';
+    this.movieWithoutAddedAt = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423}';
     this.favoriteTestData = '[{"userId": "juanasanchez@gmail.com",'+
       '"favorites":['+ this.movie1 +','+ this.movie2 +']}]';
     this.userJuanaJSON = '{' +
