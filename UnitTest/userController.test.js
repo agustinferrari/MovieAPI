@@ -43,16 +43,6 @@ function countSessionTest(email, expectedCount) {
   expect(userInSessionArrayCount).toBe(expectedCount);
 }
 
-test('Remove session in array', () =>{
-  userController.removeSession('pepep@gmail.com');
-  countSessionTest('pepep@gmail.com', 0);
-});
-
-test('Remove session not in array', () =>{
-  userController.removeSession('mariogaspar@gmail.com');
-  countSessionTest('mariogaspar@gmail.com', 0);
-});
-
 describe('Testing using local data', () =>{
   const {TestData} = require('./utils/TestData.js');
   let testData;
@@ -99,12 +89,18 @@ describe('Testing using local data', () =>{
     countSessionTest(user.email, 0);
   });
 
-
   test('Logout token in session', () =>{
     const token = userController.sessionArray[0].token;
     const email = userController.sessionArray[0].userId;
     userController.logout(token);
-    countSessionTest(user.email, 0);
+    countSessionTest(email, 0);
+  });
+
+  test('Logout token without session', () =>{
+    const token = userController.sessionArray[0].token + 1;
+    const sessionCountBeforeLogout = userController.sessionArray.length;
+    userController.logout(token);
+    expect(userController.sessionArray.length).toBe(sessionCountBeforeLogout);
   });
 });
 

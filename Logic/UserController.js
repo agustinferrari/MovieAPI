@@ -37,21 +37,21 @@ class UserController {
     }
   }
 
-  removeSession(userEmail) {
-    for (let i = 0; i < this.sessionArray.length; i++) {
-      const sessionIterator = this.sessionArray[i];
-      if (sessionIterator.userId === userEmail) {
-        this.sessionArray.splice(i, 1);
-      }
-    }
-  }
-
   login(userEmail, userPassword) {
     if (this.userDataAccess.login(userEmail, userPassword)) {
       this.addSession(userEmail);
       return true;
     }
     return false;
+  }
+
+  logout(tokenToDisable) {
+    for (let i = 0; i < this.sessionArray.length; i++) {
+      const sessionIterator = this.sessionArray[i];
+      if (sessionIterator.token === tokenToDisable) {
+        this.sessionArray.splice(i, 1);
+      }
+    }
   }
 }
 
