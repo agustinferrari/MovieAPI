@@ -104,6 +104,12 @@ describe('Login/Logout tests', () =>{
 describe('Register tests', () =>{
   let spy;
 
+  beforeAll(() => {
+    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    loginSpy.mockReturnValue(true);
+    userController.login('pepep@gmail.com', '424pass2343421');
+  });
+
   beforeEach(() => {
     userController = new UserController();
     spy = jest.spyOn(userController.userDataAccess, 'register');
@@ -186,4 +192,73 @@ describe('Add favorite tests', () =>{
   });
 });
 
+
+describe('Get user favorite tests', () =>{
+  let spy;
+  let testData;
+  let favoritesMock;
+
+  beforeAll(() => {
+    testData = new TestData();
+    favoritesMock = JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
+  });
+
+  beforeEach(() => {
+    userController = new UserController();
+    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    loginSpy.mockReturnValue(true);
+    userController.login('pepep@gmail.com', '424pass2343421');
+    spy = jest.spyOn(userController.userDataAccess, 'getFavorites');
+  });
+
+  afterEach(() => {
+    spy.mockRestore();
+  });
+
+  test('Get favorites from user with favorites', () => {
+    const userEmail = 'pepep@gmail.com';
+    const token = userController.sessionArray[0].token;
+    spy.mockReturnValue(favoritesMock);
+    const favorites = userController.getFavorites(userEmail, token);
+    expect(favorites).toHaveLength(3);
+    expect(checkOrderedBySuggestion(favorites)).toBeTruthy();
+  });
+
+  test('Get favorites from user with wrong token', () => {
+    const userEmail = 'juan@gmail.com';
+    const token = userController.sessionArray[0].token;
+    spy.mockReturnValue([]);
+    const favorites = userController.getFavorites(userEmail, token);
+    expect(favorites).toHaveLength(0);
+  });
+
+  test('Get favorites from user without registered token', () => {
+    const userEmail = 'juan@gmail.com';
+    const token = 'not a token';
+    spy.mockReturnValue([]);
+    const favorites = userController.getFavorites(userEmail, token);
+    expect(favorites).toHaveLength(0);
+  });
+
+  test('Get favorites from user without favorites', () => {
+    const userEmail = 'pepep@gmail.com';
+    const token = userController.sessionArray[0].token;
+    spy.mockReturnValue([]);
+    const favorites = userController.getFavorites(userEmail, token);
+    expect(favorites).toHaveLength(0);
+  });
+
+  function checkOrderedBySuggestion(favoriteArray) {
+    let isOrderedBySuggestion = true;
+    let lastSuggestion = 100;
+    for (let i = 0; i < favoriteArray.length && isOrderedBySuggestion; i++) {
+      const favoriteIterator = favoriteArray[i];
+      if (favoriteIterator.suggestionForTodayScore > lastSuggestion) {
+        isOrderedBySuggestion = false;
+      }
+      lastSuggestion= favoriteIterator.suggestionForTodayScore;
+    }
+    return isOrderedBySuggestion;
+  }
+});
 

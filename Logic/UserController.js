@@ -62,6 +62,38 @@ class UserController {
     movie.addedAt = new Date().toISOString().slice(0, 10);
     return this.userDataAccess.addFavorite(user.email, movie);
   }
+
+  getFavorites(userEmail, token) {
+    if (this.tokenBelongsToUser(userEmail, token)) {
+      const userFavorites = this.userDataAccess.getFavorites(userEmail);
+      for (let i = 0; i < userFavorites.length; i++) {
+        const favorite = userFavorites[i];
+        const randomSuggestion = this.getRandomBetween0And99();
+        favorite.suggestionForTodayScore = randomSuggestion;
+      }
+      userFavorites.sort(
+          (favA, favB) => (favA.suggestionForTodayScore < favB.suggestionForTodayScore) ? 1 : -1,
+      );
+      return userFavorites;
+    } else {
+      return [];
+    }
+  }
+
+  getRandomBetween0And99() {
+    return Math.floor(Math.random() * 100);
+  }
+
+  tokenBelongsToUser(userEmail, token) {
+    let tokenBelongsToUser = false;
+    for (let i = 0; i < this.sessionArray.length && !tokenBelongsToUser; i++) {
+      const sessionIterator = this.sessionArray[i];
+      if (sessionIterator.token === token && sessionIterator.userId == userEmail) {
+        tokenBelongsToUser = true;
+      }
+    }
+    return tokenBelongsToUser;
+  }
 }
 
 module.exports = {UserController: UserController};
