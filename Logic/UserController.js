@@ -58,9 +58,12 @@ class UserController {
     return this.userDataAccess.register(user);
   }
 
-  addFavorite(user, movie) {
-    movie.addedAt = new Date().toISOString().slice(0, 10);
-    return this.userDataAccess.addFavorite(user.email, movie);
+  addFavorite(user, movie, token) {
+    if (this.tokenBelongsToUser(user.email, token)) {
+      movie.addedAt = new Date().toISOString().slice(0, 10);
+      return this.userDataAccess.addFavorite(user.email, movie);
+    }
+    return false;
   }
 
   getFavorites(userEmail, token) {

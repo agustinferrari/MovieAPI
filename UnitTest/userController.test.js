@@ -153,6 +153,9 @@ describe('Add favorite tests', () =>{
   beforeEach(() => {
     userController = new UserController();
     spy = jest.spyOn(userController.userDataAccess, 'addFavorite');
+    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    loginSpy.mockReturnValue(true);
+    userController.login('pepep@gmail.com', '424pass2343421');
   });
 
   afterEach(() => {
@@ -170,7 +173,8 @@ describe('Add favorite tests', () =>{
     const movieWithAddedAt = movieWithoutAddedAt;
     movieWithAddedAt.addedAt = new Date().toISOString().slice(0, 10);
     spy.mockReturnValue(true);
-    expect(userController.addFavorite(registerdUser, movieWithoutAddedAt)).toBeTruthy();
+    const token = userController.sessionArray[0].token;
+    expect(userController.addFavorite(registerdUser, movieWithoutAddedAt, token)).toBeTruthy();
     const callParameters = spy.mock.calls[0][1];
     expect(callParameters).toBe(movieWithAddedAt);
   });
@@ -186,9 +190,9 @@ describe('Add favorite tests', () =>{
     const movieWithAddedAt = movieWithoutAddedAt;
     movieWithAddedAt.addedAt = new Date().toISOString().slice(0, 10);
     spy.mockReturnValue(false);
-    expect(userController.addFavorite(registerdUser, movieWithoutAddedAt)).toBeFalsy();
-    const callParameters = spy.mock.calls[0][1];
-    expect(callParameters).toBe(movieWithAddedAt);
+    const token = userController.sessionArray[0].token;
+    expect(userController.addFavorite(registerdUser, movieWithoutAddedAt, token)).toBeFalsy();
+    expect(spy.mock.calls.length).toBe(0);
   });
 });
 
