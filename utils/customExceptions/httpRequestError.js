@@ -1,7 +1,7 @@
 class HTTPRequestError extends Error {
   constructor(message) {
-    super(message); // (1)
-    this.name = 'HTTPRequestError'; // (2)
+    super(message);
+    this.name = 'HTTPRequestError';
   }
 }
 

@@ -1,6 +1,7 @@
 const {UserController} = require('./../logic/userController.js');
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
 const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError');
+const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError.js');
 const {TestData} = require('./utils/testData.js');
 const unirest = require('unirest');
 jest.mock('unirest');
@@ -194,7 +195,9 @@ describe('Add favorite tests', () =>{
     movieWithAddedAt.addedAt = new Date().toISOString().slice(0, 10);
     spy.mockReturnValue(false);
     const token = userController.sessionArray[0].token;
-    expect(userController.addFavorite(registerdUser, movieWithoutAddedAt, token)).toBeFalsy();
+    expect(() => {
+      userController.addFavorite(registerdUser, movieWithoutAddedAt, token);
+    }).toThrow(InvalidTokenError);
     expect(spy.mock.calls.length).toBe(0);
   });
 });
@@ -236,16 +239,18 @@ describe('Get user favorite tests', () =>{
     const userEmail = 'juan@gmail.com';
     const token = userController.sessionArray[0].token;
     spy.mockReturnValue([]);
-    const favorites = userController.getFavorites(userEmail, token);
-    expect(favorites).toHaveLength(0);
+    expect(() => {
+      userController.getFavorites(userEmail, token);
+    }).toThrow(InvalidTokenError);
   });
 
   test('Get favorites from user without registered token', () => {
     const userEmail = 'juan@gmail.com';
     const token = 'not a token';
     spy.mockReturnValue([]);
-    const favorites = userController.getFavorites(userEmail, token);
-    expect(favorites).toHaveLength(0);
+    expect(() => {
+      userController.getFavorites(userEmail, token);
+    }).toThrow(InvalidTokenError);
   });
 
   test('Get favorites from user without favorites', () => {
@@ -313,11 +318,10 @@ describe('Get movies tests', () =>{
     });
   });
 
-  test('Get movies with keyword from non-authenticated user', () => {
+  test('Get movies with keyword from non-authenticated user', async () => {
     const invalidToken = userController.sessionArray[0].token + 1;
-    return favorites = userController.getMoviesByKeyword(invalidToken, 'wow').then((data) => {
-      expect(data).toBe(false);
-    });
+    await expect(userController.getMoviesByKeyword(invalidToken, ''))
+        .rejects.toThrow(InvalidTokenError);
   });
 
   test('Get movies without keyword from authenticated user', async () => {

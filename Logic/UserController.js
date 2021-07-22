@@ -1,5 +1,6 @@
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
-const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError');
+const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError.js');
+const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError.js');
 const unirest = require('unirest');
 
 
@@ -65,8 +66,11 @@ class UserController {
     if (this.tokenBelongsToUser(user.email, token)) {
       movie.addedAt = new Date().toISOString().slice(0, 10);
       return this.userDataAccess.addFavorite(user.email, movie);
+    } else {
+      throw new InvalidTokenError(
+          'Error: the received token is invalid or does not belong to the email received.',
+      );
     }
-    return false;
   }
 
   getFavorites(userEmail, token) {
@@ -82,7 +86,9 @@ class UserController {
       );
       return userFavorites;
     } else {
-      return [];
+      throw new InvalidTokenError(
+          'Error: the received token is invalid or does not belong to the email received.',
+      );
     }
   }
 
@@ -94,13 +100,15 @@ class UserController {
                     '&language=en-US&query='+keyword+'&page=1&include_adult=false')
             .then(function(response) {
               if (response.error) {
-                return reject(new HTTPRequestError('Error al enviar pedido a TheMovieDB.'));
+                return reject(new HTTPRequestError(
+                    'Error: Error while sending request to TheMovieDB.',
+                ));
               }
               return resolve(response.body.results);
             });
       });
     } else {
-      return false;
+      throw new InvalidTokenError('Error: the received token is invalid.');
     }
   }
 
@@ -120,14 +128,14 @@ class UserController {
   }
 
   tokenIsValid(token) {
-    let tokenBelongsToUser = false;
-    for (let i = 0; i < this.sessionArray.length && !tokenBelongsToUser; i++) {
+    let tokenIsValid = false;
+    for (let i = 0; i < this.sessionArray.length && !tokenIsValid; i++) {
       const sessionIterator = this.sessionArray[i];
       if (sessionIterator.token === token) {
-        tokenBelongsToUser = true;
+        tokenIsValid = true;
       }
     }
-    return tokenBelongsToUser;
+    return tokenIsValid;
   }
 }
 
