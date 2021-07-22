@@ -10,6 +10,12 @@ class TestData {
     ' "addedAt" : "2021-02-16"}';
     this.movie3 = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423,'+
     ' "addedAt" : "2021-03-17"}';
+    this.movie4 = '{"original_title": "Superman", "genre_ids": [ 24 ], "id": 789532,'+
+    ' "addedAt" : "2021-02-29"}';
+    this.movie5 = '{"original_title": "Spiderman", "genre_ids": [ 4555, 4321 ], "id": 32468,'+
+    ' "addedAt" : "2021-01-14"}';
+    this.movie6 = '{"original_title": "Batman", "genre_ids": [ 21 ], "id": 34211,'+
+    ' "addedAt" : "2021-05-04"}';
     this.movieWithoutAddedAt = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423}';
     this.favoriteTestData = '[{"userId": "juanasanchez@gmail.com",'+
       '"favorites":['+ this.movie1 +','+ this.movie2 +']}]';

@@ -1,4 +1,5 @@
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError');
 const unirest = require('unirest');
 
 
@@ -93,7 +94,7 @@ class UserController {
                     '&language=en-US&query='+keyword+'&page=1&include_adult=false')
             .then(function(response) {
               if (response.error) {
-                return resolve(true);
+                return reject(new HTTPRequestError('Error al enviar pedido a TheMovieDB.'));
               }
               return resolve(response.body.results);
             });

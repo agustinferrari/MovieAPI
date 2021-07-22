@@ -1,5 +1,6 @@
 const {UserController} = require('./../logic/userController.js');
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError');
 const {TestData} = require('./utils/testData.js');
 const unirest = require('unirest');
 jest.mock('unirest');
@@ -206,7 +207,8 @@ describe('Get user favorite tests', () =>{
 
   beforeAll(() => {
     testData = new TestData();
-    favoritesMock = JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
+    favoritesMock = JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+','+
+    testData.movie4 +','+ testData.movie5 +','+ testData.movie6+']');
   });
 
   beforeEach(() => {
@@ -226,7 +228,7 @@ describe('Get user favorite tests', () =>{
     const token = userController.sessionArray[0].token;
     spy.mockReturnValue(favoritesMock);
     const favorites = userController.getFavorites(userEmail, token);
-    expect(favorites).toHaveLength(3);
+    expect(favorites).toHaveLength(6);
     expect(checkOrderedBySuggestion(favorites)).toBeTruthy();
   });
 
@@ -318,11 +320,10 @@ describe('Get movies tests', () =>{
     });
   });
 
-  test('Get movies without keyword from authenticated user', () => {
+  test('Get movies without keyword from authenticated user', async () => {
     unirest.get.mockResolvedValue(errorResponse);
     const invalidToken = userController.sessionArray[0].token;
-    return favorites = userController.getMoviesByKeyword(invalidToken, '').then((data) => {
-      expect(data).toBe(true);
-    });
+    await expect(userController.getMoviesByKeyword(invalidToken, ''))
+        .rejects.toThrow(HTTPRequestError);
   });
 });
