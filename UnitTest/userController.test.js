@@ -1,6 +1,8 @@
 const {UserController} = require('./../logic/userController.js');
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
 const {TestData} = require('./utils/testData.js');
+const unirest = require('unirest');
+jest.mock('unirest');
 const pathToUsersFile = './unitTest/usersTest.txt';
 const pathToFavoritesFile = './unitTest/favoritesTest.txt';
 let userController;
@@ -266,3 +268,61 @@ describe('Get user favorite tests', () =>{
   }
 });
 
+
+describe('Get movies tests', () =>{
+  let testData;
+  let moviesMock;
+  let correctResponse;
+  let errorResponse;
+
+
+  beforeAll(() => {
+    testData = new TestData();
+    moviesMock = JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
+    correctResponse = {
+      status: 200,
+      body:
+       {
+         results: moviesMock,
+       },
+    };
+    errorResponse = {
+      status: 200,
+      error: 'Error',
+    };
+  });
+
+  beforeEach(() => {
+    userController = new UserController();
+    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    loginSpy.mockReturnValue(true);
+    userController.login('pepep@gmail.com', '424pass2343421');
+  });
+
+  afterEach(()=>{
+    unirest.get.mockRestore();
+  });
+
+  test('Get movies with keyword from authenticated user', () => {
+    unirest.get.mockResolvedValue(correctResponse);
+    const validToken = userController.sessionArray[0].token;
+    return favorites = userController.getMoviesByKeyword(validToken, 'super').then((data) => {
+      expect(data).toBe(moviesMock);
+    });
+  });
+
+  test('Get movies with keyword from non-authenticated user', () => {
+    const invalidToken = userController.sessionArray[0].token + 1;
+    return favorites = userController.getMoviesByKeyword(invalidToken, 'wow').then((data) => {
+      expect(data).toBe(false);
+    });
+  });
+
+  test('Get movies without keyword from authenticated user', () => {
+    unirest.get.mockResolvedValue(errorResponse);
+    const invalidToken = userController.sessionArray[0].token;
+    return favorites = userController.getMoviesByKeyword(invalidToken, '').then((data) => {
+      expect(data).toBe(true);
+    });
+  });
+});

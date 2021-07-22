@@ -1,4 +1,6 @@
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+const unirest = require('unirest');
+
 
 class UserController {
   constructor() {
@@ -83,6 +85,24 @@ class UserController {
     }
   }
 
+  async getMoviesByKeyword(token, keyword) {
+    if (this.tokenIsValid(token)) {
+      const apiKey = '';
+      return new Promise((resolve, reject) => {
+        unirest.get('https://api.themoviedb.org/3/search/movie?api_key='+apiKey+
+                    '&language=en-US&query='+keyword+'&page=1&include_adult=false')
+            .then(function(response) {
+              if (response.error) {
+                return resolve(true);
+              }
+              return resolve(response.body.results);
+            });
+      });
+    } else {
+      return false;
+    }
+  }
+
   getRandomBetween0And99() {
     return Math.floor(Math.random() * 100);
   }
@@ -92,6 +112,17 @@ class UserController {
     for (let i = 0; i < this.sessionArray.length && !tokenBelongsToUser; i++) {
       const sessionIterator = this.sessionArray[i];
       if (sessionIterator.token === token && sessionIterator.userId == userEmail) {
+        tokenBelongsToUser = true;
+      }
+    }
+    return tokenBelongsToUser;
+  }
+
+  tokenIsValid(token) {
+    let tokenBelongsToUser = false;
+    for (let i = 0; i < this.sessionArray.length && !tokenBelongsToUser; i++) {
+      const sessionIterator = this.sessionArray[i];
+      if (sessionIterator.token === token) {
         tokenBelongsToUser = true;
       }
     }

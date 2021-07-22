@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/agustinferrari/MovieAPI#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "unirest": "^0.6.0"
   },
   "devDependencies": {
     "eslint": "^7.30.0",
