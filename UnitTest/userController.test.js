@@ -308,19 +308,30 @@ describe('Get user favorite tests', () =>{
 
 describe('Get movies tests', () =>{
   let testData;
-  let moviesMock;
-  let correctResponse;
+  let keywordMoviesMock;
+  let popularMoviesMock;
+  let correctResponseKeyword;
   let errorResponse;
 
 
   beforeAll(() => {
     testData = new TestData();
-    moviesMock = JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
-    correctResponse = {
+    keywordMoviesMock =
+     JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
+    popularMoviesMock=
+     JSON.parse('['+testData.movie4 +','+ testData.movie5 +','+ testData.movie6+']');
+    correctResponseKeyword = {
       status: 200,
       body:
        {
-         results: moviesMock,
+         results: keywordMoviesMock,
+       },
+    };
+    correctResponsePopular = {
+      status: 200,
+      body:
+       {
+         results: popularMoviesMock,
        },
     };
     errorResponse = {
@@ -343,23 +354,38 @@ describe('Get movies tests', () =>{
   });
 
   test('Get movies with keyword from authenticated user', () => {
-    unirest.get.mockResolvedValue(correctResponse);
+    unirest.get.mockResolvedValue(correctResponseKeyword);
     const validToken = userController.sessionArray[0].token;
     return favorites = userController.getMoviesByKeyword(validToken, 'super').then((data) => {
-      expect(data).toBe(moviesMock);
+      expect(data).toBe(keywordMoviesMock);
     });
   });
 
-  test('Get movies with keyword from non-authenticated user', async () => {
+  test('Get movies without keyword from non-authenticated user', async () => {
     const invalidToken = userController.sessionArray[0].token + 1;
     await expect(userController.getMoviesByKeyword(invalidToken, ''))
         .rejects.toThrow(InvalidTokenError);
   });
 
   test('Get movies without keyword from authenticated user', async () => {
+    unirest.get.mockResolvedValue(correctResponsePopular);
+    const validToken = userController.sessionArray[0].token;
+    return favorites = userController.getMoviesByKeyword(validToken, '').then((data) => {
+      expect(data).toBe(popularMoviesMock);
+    });
+  });
+
+  test('Error at getting movies without keyword from authenticated user', async () => {
     unirest.get.mockResolvedValue(errorResponse);
     const invalidToken = userController.sessionArray[0].token;
     await expect(userController.getMoviesByKeyword(invalidToken, ''))
+        .rejects.toThrow(HTTPRequestError);
+  });
+
+  test('Error at getting movies with keyword from authenticated user', async () => {
+    unirest.get.mockResolvedValue(errorResponse);
+    const invalidToken = userController.sessionArray[0].token;
+    await expect(userController.getMoviesByKeyword(invalidToken, 'Mega'))
         .rejects.toThrow(HTTPRequestError);
   });
 });

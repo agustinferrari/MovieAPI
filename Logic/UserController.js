@@ -100,21 +100,44 @@ class UserController {
   async getMoviesByKeyword(token, keyword) {
     if (this.tokenIsValid(token)) {
       const apiKey = '';
-      return new Promise((resolve, reject) => {
-        unirest.get('https://api.themoviedb.org/3/search/movie?api_key='+apiKey+
-                    '&language=en-US&query='+keyword+'&page=1&include_adult=false')
-            .then(function(response) {
-              if (response.error) {
-                return reject(new HTTPRequestError(
-                    'Error: Error while sending request to TheMovieDB.',
-                ));
-              }
-              return resolve(response.body.results);
-            });
-      });
+      if (keyword) {
+        return this.makeKeywordRequest(apiKey, keyword);
+      } else {
+        return this.makePopularRequest(apiKey);
+      }
     } else {
       throw new InvalidTokenError('Error: the received token is invalid.');
     }
+  }
+
+  makeKeywordRequest(apiKey, keyword) {
+    return new Promise((resolve, reject) => {
+      unirest.get('https://api.themoviedb.org/3/search/movie?api_key='+apiKey+
+                '&language=en-US&query='+keyword+'&page=1&include_adult=false')
+          .then(function(response) {
+            if (response.error) {
+              return reject(new HTTPRequestError(
+                  'Error: Error while sending request to TheMovieDB.',
+              ));
+            }
+            return resolve(response.body.results);
+          });
+    });
+  }
+
+  makePopularRequest(apiKey) {
+    return new Promise((resolve, reject) => {
+      unirest.get('https://api.themoviedb.org/3/movie/popular?'+
+              'api_key='+apiKey+'&language=en-US&page=1')
+          .then(function(response) {
+            if (response.error) {
+              return reject(new HTTPRequestError(
+                  'Error: Error while sending request to TheMovieDB.',
+              ));
+            }
+            return resolve(response.body.results);
+          });
+    });
   }
 
   getRandomBetween0And99() {
