@@ -7,22 +7,32 @@ beforeAll(() => {
   validator = new Validator();
 });
 
-describe('Is valid JSON Object tests', () =>{
-  test('Valid JSON Object', () => {
+describe('Is valid JSON object tests', () =>{
+  test('Valid JSON object', () => {
     expect(validator.isValidObject(validatorTestData.validUser)).toBeTruthy();
   });
 
-  test.each(validatorTestData.invalidJSONArray)('Invalid JSON Object', (invalidJSON) => {
+  test.each(validatorTestData.invalidJSONArray)('Invalid JSON object', (invalidJSON) => {
     expect(validator.isValidObject(invalidJSON)).toBeFalsy();
   });
 });
 
-describe('Is valid user', () =>{
-  test('Valid user', () => {
+describe('Is valid user object', () =>{
+  test('Valid user object', () => {
     expect(validator.isValidUser(validatorTestData.validUser)).toBeTruthy();
   });
 
-  test.each(validatorTestData.invalidUserArray)('Invalid user', (invalidJSON) => {
+  test.each(validatorTestData.invalidUserArray)('Invalid user object', (invalidJSON) => {
     expect(validator.isValidUser(invalidJSON)).toBeFalsy();
+  });
+});
+
+describe('Is valid login object', () =>{
+  test('Valid login object', () => {
+    expect(validator.isValidLogin(validatorTestData.validLogin)).toBeTruthy();
+  });
+
+  test.each(validatorTestData.invalidLoginArray)('Invalid login object', (invalidJSON) => {
+    expect(validator.isValidLogin(invalidJSON)).toBeFalsy();
   });
 });

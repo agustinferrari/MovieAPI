@@ -26,6 +26,7 @@ class ValidatorTestData {
       '"password": "password12345"';
     this.invalidJSONArray = [this.invalidJSON1, this.invalidJSON2,
       this.invalidJSON3, this.invalidJSON4, this.invalidJSON5];
+
     this.invalidUser1 = '{' +
       '"firstName": "Juana",' +
       '"lastName": "Sanchez",' +
@@ -54,6 +55,18 @@ class ValidatorTestData {
     '}';
     this.invalidUserArray = [this.invalidUser1, this.invalidUser2,
       this.invalidUser3, this.invalidUser4, this.invalidJSON1];
+
+    this.invalidLogin1 = '{' +
+      '"password": "password12345"' +
+    '}';
+    this.invalidLogin2 = '{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '}';
+    this.validLogin = '{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '"password": "password12345"' +
+    '}';
+    this.invalidLoginArray = [this.invalidLogin1, this.invalidLogin2, this.invalidJSON1];
   }
 }
 
