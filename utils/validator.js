@@ -7,6 +7,16 @@ class Validator {
     }
     return true;
   }
+
+  isValidUser(JSONObject) {
+    if (this.isValidObject(JSONObject)) {
+      const parsedObject = JSON.parse(JSONObject);
+      return 'email' in parsedObject && 'firstName' in parsedObject &&
+        'lastName' in parsedObject && 'password' in parsedObject;
+    } else {
+      return false;
+    };
+  }
 }
 
 module.exports = {Validator: Validator};
