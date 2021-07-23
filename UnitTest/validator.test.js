@@ -1,15 +1,18 @@
 const {TestData} = require('./utils/testData.js');
-const {Validator} = require('./utils/validator.js');
-let testData;
+const {Validator} = require('./../utils/validator.js');
+const testData= new TestData();
 let validator;
 
 beforeAll(() => {
-  testData = new TestData();
   validator = new Validator();
 });
 
 describe('Is valid JSON Object tests', () =>{
   test('Valid JSON Object', () => {
-    expect(Validator.isValidObject(testData.userJuanaJSON)).toBeTruthy();
+    expect(validator.isValidObject(testData.userJuanaJSON)).toBeTruthy();
+  });
+
+  test.each(testData.invalidJSONArray)('Invalid JSON Object', (invalidJSON) => {
+    expect(validator.isValidObject(invalidJSON)).toBeFalsy();
   });
 });

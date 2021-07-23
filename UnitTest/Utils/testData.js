@@ -32,6 +32,32 @@ class TestData {
       '"password": "424pass2343421"' +
     '}';
     this.userTestData = '['+ this.userJuanaJSON +','+ this.userPepeJSON +']';
+    this.invalidJSON1 = '{' +
+      '"email" "juanasanchez@gmail.com",' +
+      '"firstName" "Juana",' +
+      '"lastName" "Sanchez",' +
+      '"password" "password12345"' +
+    '}';
+    this.invalidJSON2 = '{' +
+      '"email": "juanasanchez@gmail.com",' +
+      '"fi}';
+    this.invalidJSON3 = '{' +
+      '"email": "juanasanchez@gmail.com",' +
+      '"firstName": "Juana",' +
+      '"lastName": "Sanchez",' +
+      '"password": "password12345"';
+    this.invalidJSON4 =
+      '"email": "juanasanchez@gmail.com",' +
+      '"firstName": "Juana",' +
+      '"lastName": "Sanchez",' +
+      '"password": "password12345"';
+    this.invalidJSON5 = '{' +
+      '"email": "juanasanchez@gmail.com"' +
+      '"firstName": "Juana"' +
+      '"lastName": "Sanchez"' +
+      '"password": "password12345"';
+    this.invalidJSONArray = [this.invalidJSON1, this.invalidJSON2,
+      this.invalidJSON3, this.invalidJSON4, this.invalidJSON5];
   }
 
   testFilesInitialize() {
