@@ -11,8 +11,11 @@ class Validator {
   isValidUser(JSONObject) {
     if (this.isValidObject(JSONObject)) {
       const parsedObject = JSON.parse(JSONObject);
-      return 'email' in parsedObject && 'firstName' in parsedObject &&
+      const hasProperties = 'email' in parsedObject && 'firstName' in parsedObject &&
         'lastName' in parsedObject && 'password' in parsedObject;
+      const hasValidProperties = hasProperties && this.validateEmail(parsedObject.email) &&
+        parsedObject.firstName && parsedObject.lastName &&parsedObject.password;
+      return hasValidProperties;
     } else {
       return false;
     };
@@ -42,6 +45,11 @@ class Validator {
     } else {
       return false;
     };
+  }
+
+  validateEmail(email) {
+    const emailRegex = /\S+@\S+\.\S+/;
+    return emailRegex.test(email);
   }
 }
 
