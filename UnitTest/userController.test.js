@@ -2,6 +2,8 @@ const {UserController} = require('./../logic/userController.js');
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
 const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError');
 const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError.js');
+const {InvalidEmailError} = require('../utils/customExceptions/invalidEmailError.js');
+const {InvalidPasswordError} = require('../utils/customExceptions/invalidPasswordError.js');
 const {TestData} = require('./utils/testData.js');
 const unirest = require('unirest');
 jest.mock('unirest');
@@ -49,17 +51,21 @@ function countSessionTest(email, expectedCount) {
 }
 
 describe('Login/Logout tests', () =>{
-  let spy;
+  let loginSpy;
+  let existsSpy;
 
   beforeEach(() => {
     userController = new UserController();
-    spy = jest.spyOn(userController.userDataAccess, 'login');
-    spy.mockReturnValue(true);
+    loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    existsSpy.mockReturnValue(true);
+    loginSpy.mockReturnValue(true);
     userController.login('pepep@gmail.com', '424pass2343421');
   });
 
   afterEach(() => {
-    spy.mockRestore();
+    loginSpy.mockRestore();
+    existsSpy.mockRestore();
   });
 
   test('Login registered user', () =>{
@@ -67,6 +73,7 @@ describe('Login/Logout tests', () =>{
       email: 'juanasanchez@gmail.com',
       password: 'password12345',
     };
+    existsSpy.mockReturnValue(true);
     expect(userController.login(user.email, user.password)).toBeTruthy();
     countSessionTest(user.email, 1);
   });
@@ -76,6 +83,7 @@ describe('Login/Logout tests', () =>{
       email: 'pepep@gmail.com',
       password: '424pass2343421',
     };
+    existsSpy.mockReturnValue(true);
     expect(userController.login(user.email, user.password)).toBeTruthy();
     countSessionTest(user.email, 1);
   });
@@ -85,9 +93,25 @@ describe('Login/Logout tests', () =>{
       email: 'mariogaspar@gmail.com',
       password: '343423cxtrp213',
     };
-    spy.mockReturnValue(false);
-    expect(userController.login(user.email, user.password)).toBeFalsy();
+    existsSpy.mockReturnValue(false);
+    loginSpy.mockReturnValue(false);
+    expect(() => {
+      userController.login(user.email, user.password);
+    }).toThrow(InvalidEmailError);
     countSessionTest(user.email, 0);
+  });
+
+  test('Login registered user with wrong password', () =>{
+    const user = {
+      email: 'pepep@gmail.com',
+      password: 'wrongpassword123',
+    };
+    existsSpy.mockReturnValue(true);
+    loginSpy.mockReturnValue(false);
+    expect(() => {
+      userController.login(user.email, user.password);
+    }).toThrow(InvalidPasswordError);
+    countSessionTest(user.email, 1);
   });
 
   test('Logout token in session', () =>{
@@ -110,6 +134,8 @@ describe('Register tests', () =>{
 
   beforeAll(() => {
     const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    existsSpy.mockReturnValue(true);
     loginSpy.mockReturnValue(true);
     userController.login('pepep@gmail.com', '424pass2343421');
   });
@@ -158,6 +184,8 @@ describe('Add favorite tests', () =>{
     userController = new UserController();
     spy = jest.spyOn(userController.userDataAccess, 'addFavorite');
     const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    existsSpy.mockReturnValue(true);
     loginSpy.mockReturnValue(true);
     userController.login('pepep@gmail.com', '424pass2343421');
   });
@@ -217,6 +245,8 @@ describe('Get user favorite tests', () =>{
   beforeEach(() => {
     userController = new UserController();
     const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    existsSpy.mockReturnValue(true);
     loginSpy.mockReturnValue(true);
     userController.login('pepep@gmail.com', '424pass2343421');
     spy = jest.spyOn(userController.userDataAccess, 'getFavorites');
@@ -302,6 +332,8 @@ describe('Get movies tests', () =>{
   beforeEach(() => {
     userController = new UserController();
     const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    existsSpy.mockReturnValue(true);
     loginSpy.mockReturnValue(true);
     userController.login('pepep@gmail.com', '424pass2343421');
   });

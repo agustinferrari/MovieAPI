@@ -1,6 +1,8 @@
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
 const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError.js');
 const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError.js');
+const {InvalidEmailError} = require('../utils/customExceptions/invalidEmailError.js');
+const {InvalidPasswordError} = require('../utils/customExceptions/invalidPasswordError.js');
 const unirest = require('unirest');
 
 
@@ -42,11 +44,14 @@ class UserController {
   }
 
   login(userEmail, userPassword) {
-    if (this.userDataAccess.login(userEmail, userPassword)) {
-      this.addSession(userEmail);
-      return true;
+    if (this.userDataAccess.exists(userEmail)) {
+      if (this.userDataAccess.login(userEmail, userPassword)) {
+        this.addSession(userEmail);
+        return true;
+      }
+      throw new InvalidPasswordError('Error: the password received is incorrect.');
     }
-    return false;
+    throw new InvalidEmailError('Error: the email received is not linked to any account.');
   }
 
   logout(tokenToDisable) {
