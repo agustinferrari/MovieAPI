@@ -67,10 +67,15 @@ class UserController {
     return this.userDataAccess.register(user);
   }
 
-  addFavorite(user, movie, token) {
+  addFavorite(user, movies, token) {
     if (this.tokenBelongsToUser(user.email, token)) {
-      movie.addedAt = new Date().toISOString().slice(0, 10);
-      return this.userDataAccess.addFavorite(user.email, movie);
+      let result = true;
+      for (let i = 0; i < movies.length; i++) {
+        const movie = movies[i];
+        movie.addedAt = new Date().toISOString().slice(0, 10);
+        result = result && this.userDataAccess.addFavorite(user.email, movie);
+      }
+      return result;
     } else {
       throw new InvalidTokenError(
           'Error: the received token is not registered or does not belong to the email received.',

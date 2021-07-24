@@ -10,12 +10,14 @@ const getMoviesMock = jest.fn();
 const registerUserMock = jest.fn();
 const loginMock = jest.fn();
 const logoutMock = jest.fn();
+const addFavoriteMock = jest.fn();
 UserController.mockImplementation(
     () => ({
       getMovies: getMoviesMock,
       register: registerUserMock,
       login: loginMock,
       logout: logoutMock,
+      addFavorite: addFavoriteMock,
     }),
 );
 
