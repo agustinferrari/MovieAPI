@@ -40,43 +40,51 @@ describe('Get movies tests', () =>{
   test('Get movies from authenticated user without keyword', async () => {
     getMoviesMock.mockResolvedValue(popularMovies);
     const response = await request.get('/getMovies').query({
-      token: 's6ra092t080te2t12',
+      token: 'EY3Z762DpcUR9eiGe6RR',
     });
     expect(response.body.message).toStrictEqual(popularMovies);
-    expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('s6ra092t080te2t12');
+    expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('EY3Z762DpcUR9eiGe6RR');
     expect(response.status).toBe(200);
   });
 
   test('Get movies from authenticated user with keyword', async () => {
     getMoviesMock.mockResolvedValue(keywordMovies);
     const response = await request.get('/getMovies').query({
-      token: 's6ra092t080te2t12',
+      token: 'It8GNmSOj8g137BSRbEa',
       keyword: 'Man',
     });
     expect(response.body.message).toStrictEqual(keywordMovies);
-    expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('s6ra092t080te2t12');
+    expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(getMoviesMock.mock.calls[0][1]).toStrictEqual('Man');
     expect(response.status).toBe(200);
   });
 
   test('Get movies from non-authenticated user without keyword', async () => {
     getMoviesMock.mockImplementation(() => {
-      throw new InvalidTokenError('Error: the received token is invalid.');
+      throw new InvalidTokenError('Error: the received token is not registered.');
     });
     const response = await request.get('/getMovies').query({
-      token: '89ts90ruylhn3keit0',
+      token: 'It8GNmSOj8g137BSRbEa',
     });
     expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the received token is invalid.');
+    expect(response.body).toBe('Error: the received token is not registered.');
   });
 
+  test('Get movies without token', async () => {
+    getMoviesMock.mockImplementation(() => {
+      throw new InvalidTokenError('Error: the received token is not registered.');
+    });
+    const response = await request.get('/getMovies');
+    expect(response.status).toBe(401);
+    expect(response.body).toBe('Error: the specified token is invalid.');
+  });
 
   test('Get movies unexpected error', async () => {
     getMoviesMock.mockImplementation(() => {
       throw new UnexpectedError('Error description');
     });
     const response = await request.get('/getMovies').query({
-      token: '89ts90ruylhn3keit0',
+      token: 'EY3Z762DpcUR9eiGe6RR',
     });
     expect(response.status).toBe(500);
     expect(response.body).toBe('Error: Unexpected Error');
@@ -87,7 +95,7 @@ describe('Get movies tests', () =>{
       throw new HTTPRequestError('Error: Error while sending request to TheMovieDB.');
     });
     const response = await request.get('/getMovies').query({
-      token: '89ts90ruylhn3keit0',
+      token: 'EY3Z762DpcUR9eiGe6RR',
     });
     expect(response.status).toBe(502);
     expect(response.body).toBe('Error: Error while sending request to TheMovieDB.');

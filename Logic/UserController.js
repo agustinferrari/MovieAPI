@@ -73,7 +73,7 @@ class UserController {
       return this.userDataAccess.addFavorite(user.email, movie);
     } else {
       throw new InvalidTokenError(
-          'Error: the received token is invalid or does not belong to the email received.',
+          'Error: the received token is not registered or does not belong to the email received.',
       );
     }
   }
@@ -92,7 +92,7 @@ class UserController {
       return userFavorites;
     } else {
       throw new InvalidTokenError(
-          'Error: the received token is invalid or does not belong to the email received.',
+          'Error: the received token is not registered or does not belong to the email received.',
       );
     }
   }
@@ -106,7 +106,7 @@ class UserController {
         return this.makePopularRequest(apiKey);
       }
     } else {
-      throw new InvalidTokenError('Error: the received token is invalid.');
+      throw new InvalidTokenError('Error: the received token is not registered.');
     }
   }
 
