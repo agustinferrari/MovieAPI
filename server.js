@@ -39,4 +39,24 @@ app.post('/registerUser', async (req, res) => {
   }
 });
 
+app.post('/login', async (req, res) => {
+  const loginEntry = req.body;
+  if (validator.isValidLogin(loginEntry)) {
+    try {
+      const token = userController.login(loginEntry.email, loginEntry.password);
+      res.status(200).json(token);
+    } catch (error) {
+      if (error instanceof InvalidEmailError) {
+        res.status(409).json(error.message);
+      } else if (error instanceof InvalidPasswordError) {
+        res.status(409).json(error.message);
+      } else {
+        res.status(500).json('Error: Unexpected Error');
+      }
+    }
+  } else {
+    res.sendStatus(400);
+  }
+});
+
 module.exports = app;

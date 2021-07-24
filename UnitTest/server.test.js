@@ -21,16 +21,20 @@ const app = require('./../server.js');
 const supertest = require('supertest');
 const request = supertest(app);
 
+afterEach(()=>{
+  getMoviesMock.mockRestore();
+  getMoviesMock.mock.calls = [];
+  registerUserMock.mockRestore();
+  registerUserMock.mock.calls = [];
+  loginMock.mockRestore();
+  loginMock.mock.calls = [];
+});
 
 describe('Get movies tests', () =>{
   const popularMovies =
   JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
   const keywordMovies =
   JSON.parse('['+testData.movie4 +','+ testData.movie5 +','+ testData.movie6+']');
-
-  afterEach(()=>{
-    jest.resetAllMocks();
-  });
 
 
   test('Get movies from authenticated user without keyword', async () => {
@@ -144,13 +148,67 @@ describe('Login tests', () =>{
       return 'r21sF34Ti55n4fN4S5uf6';
     });
     const loginEntry = JSON.parse(testData.loginJSON);
-    const response = await request.post('/registerUser')
+    const response = await request.post('/login')
         .send(testData.loginJSON)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(registerUserMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
-    expect(registerUserMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
+    expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
+    expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
     expect(response.status).toBe(200);
     expect(response.body).toBe('r21sF34Ti55n4fN4S5uf6');
+  });
+
+  test('Login with unregistered user', async () => {
+    loginMock.mockImplementation(() => {
+      throw new InvalidEmailError('Error: the email received is not linked to any account.');
+    });
+    const loginEntry = JSON.parse(testData.loginJSON);
+    const response = await request.post('/login')
+        .send(testData.loginJSON)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
+    expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
+    expect(response.status).toBe(409);
+    expect(response.body).toBe('Error: the email received is not linked to any account.');
+  });
+
+  test('Login with registered user but incorrect password', async () => {
+    loginMock.mockImplementation(() => {
+      throw new InvalidPasswordError('Error: the password received is incorrect.');
+    });
+    const loginEntry = JSON.parse(testData.loginJSON);
+    const response = await request.post('/login')
+        .send(testData.loginJSON)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
+    expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
+    expect(response.status).toBe(409);
+    expect(response.body).toBe('Error: the password received is incorrect.');
+  });
+
+  test('Login with registered user but incorrect password', async () => {
+    loginMock.mockImplementation(() => {
+      throw new UnexpectedError('Error description');
+    });
+    const loginEntry = JSON.parse(testData.loginJSON);
+    const response = await request.post('/login')
+        .send(testData.loginJSON)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
+    expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
+    expect(response.status).toBe(500);
+    expect(response.body).toBe('Error: Unexpected Error');
+  });
+
+  test('Login with registered user but incorrect password', async () => {
+    const response = await request.post('/login')
+        .send(testData.invalidLoginJSON)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(loginMock.mock.calls.length).toBe(0);
+    expect(response.status).toBe(400);
   });
 });

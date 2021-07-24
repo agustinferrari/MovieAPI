@@ -42,6 +42,10 @@ class TestData {
       '"email": "pepep@gmail.com",' +
       '"password": "424pass2343421"' +
     '}';
+    this.invalidLoginJSON = '{' +
+      '"email": "pepep@gmail.com",' +
+      '"pass": "424pass2343421"' +
+    '}';
   }
 
   testFilesInitialize() {
