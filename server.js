@@ -15,6 +15,7 @@ app.use(express.json());
 app.get('/getMovies', async (req, res) => {
   const token = req.query.token;
   const keyword = req.query.keyword;
+
   try {
     userController.getMovies(token, keyword).then((result) => {
       res.json({message: result});

@@ -120,6 +120,12 @@ class ValidatorTestData {
     this.invalidAddFavoriteArray = [this.invalidAddFavorite1, this.invalidAddFavorite2,
       this.invalidAddFavorite3, this.invalidAddFavorite4, this.invalidAddFavorite5,
       this.invalidAddFavorite6, this.invalidAddFavorite7];
+
+    this.validTokenArray = ['EY3Z762DpcUR9eiGe6RR', 'It8GNmSOj8g137BSRbEa', 'V5SNh4ehOPSFgqPpgeTC',
+      '7qe3CgARk30401WdACqK', 'gLPZQjpI9dwRiWmod32r'];
+
+    this.invalidTokenArray = ['E____62DpcUR9eiGe6RR', '', undefined,
+      25, {token: 'gLPZQjpI9dwRiWmod32r'}, 'gLPZQjpI9d2r'];
   }
 }
 

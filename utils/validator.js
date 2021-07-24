@@ -23,6 +23,11 @@ class Validator {
     return hasValidMoviesAndProperties;
   }
 
+  isValidToken(token) {
+    const regexAlphanumeric20Chars = /^[a-z0-9]{20}$/i;
+    return regexAlphanumeric20Chars.test(token);
+  }
+
   validateEmail(email) {
     const emailRegex = /\S+@\S+\.\S+/;
     return emailRegex.test(email);

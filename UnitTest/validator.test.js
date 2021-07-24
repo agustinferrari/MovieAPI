@@ -37,3 +37,16 @@ describe('Is valid add favorite object', () =>{
         expect(validator.isValidAddFavorite(invalidJSON)).toBeFalsy();
       });
 });
+
+describe('Is valid token test', () =>{
+  test.each(validatorTestData.validTokenArray)('Valid tokens',
+      (validToken) => {
+        expect(validator.isValidToken(validToken)).toBeTruthy();
+      });
+
+  test.each(validatorTestData.invalidTokenArray)('Invalid tokens',
+      (invalidToken) => {
+        expect(validator.isValidToken(invalidToken)).toBeFalsy();
+      });
+});
+

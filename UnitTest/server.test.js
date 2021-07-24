@@ -70,14 +70,6 @@ describe('Get movies tests', () =>{
     expect(response.body).toBe('Error: the received token is invalid.');
   });
 
-  test('Get movies without token', async () => {
-    getMoviesMock.mockImplementation(() => {
-      throw new InvalidTokenError('Error: the received token is invalid.');
-    });
-    const response = await request.get('/getMovies');
-    expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the received token is invalid.');
-  });
 
   test('Get movies unexpected error', async () => {
     getMoviesMock.mockImplementation(() => {
