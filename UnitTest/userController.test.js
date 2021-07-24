@@ -356,21 +356,21 @@ describe('Get movies tests', () =>{
   test('Get movies with keyword from authenticated user', () => {
     unirest.get.mockResolvedValue(correctResponseKeyword);
     const validToken = userController.sessionArray[0].token;
-    return favorites = userController.getMoviesByKeyword(validToken, 'super').then((data) => {
+    return favorites = userController.getMovies(validToken, 'super').then((data) => {
       expect(data).toBe(keywordMoviesMock);
     });
   });
 
   test('Get movies without keyword from non-authenticated user', async () => {
     const invalidToken = userController.sessionArray[0].token + 1;
-    await expect(userController.getMoviesByKeyword(invalidToken, ''))
+    await expect(userController.getMovies(invalidToken, ''))
         .rejects.toThrow(InvalidTokenError);
   });
 
   test('Get movies without keyword from authenticated user', async () => {
     unirest.get.mockResolvedValue(correctResponsePopular);
     const validToken = userController.sessionArray[0].token;
-    return favorites = userController.getMoviesByKeyword(validToken, '').then((data) => {
+    return favorites = userController.getMovies(validToken, '').then((data) => {
       expect(data).toBe(popularMoviesMock);
     });
   });
@@ -378,14 +378,14 @@ describe('Get movies tests', () =>{
   test('Error at getting movies without keyword from authenticated user', async () => {
     unirest.get.mockResolvedValue(errorResponse);
     const invalidToken = userController.sessionArray[0].token;
-    await expect(userController.getMoviesByKeyword(invalidToken, ''))
+    await expect(userController.getMovies(invalidToken, ''))
         .rejects.toThrow(HTTPRequestError);
   });
 
   test('Error at getting movies with keyword from authenticated user', async () => {
     unirest.get.mockResolvedValue(errorResponse);
     const invalidToken = userController.sessionArray[0].token;
-    await expect(userController.getMoviesByKeyword(invalidToken, 'Mega'))
+    await expect(userController.getMovies(invalidToken, 'Mega'))
         .rejects.toThrow(HTTPRequestError);
   });
 });

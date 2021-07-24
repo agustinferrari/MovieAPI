@@ -97,8 +97,8 @@ class UserController {
     }
   }
 
-  async getMoviesByKeyword(token, keyword) {
-    if (this.tokenIsValid(token)) {
+  async getMovies(token, keyword) {
+    if (this.isTokenValid(token)) {
       const apiKey = '';
       if (keyword) {
         return this.makeKeywordRequest(apiKey, keyword);
@@ -155,7 +155,7 @@ class UserController {
     return tokenBelongsToUser;
   }
 
-  tokenIsValid(token) {
+  isTokenValid(token) {
     let tokenIsValid = false;
     for (let i = 0; i < this.sessionArray.length && !tokenIsValid; i++) {
       const sessionIterator = this.sessionArray[i];
