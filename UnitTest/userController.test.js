@@ -204,7 +204,7 @@ describe('Add favorite tests', () =>{
       password: '424pass2343421',
     };
     const moviesWithoutAddedAt = JSON.parse(testData.addFavoriteArray);
-    const moviesWithAddedAt = JSON.parse(testData.addFavoriteArrayRespose);
+    const moviesWithAddedAt = JSON.parse(testData.addFavoriteArrayResponse);
     spy.mockReturnValue(true);
     const token = userController.sessionArray[0].token;
     expect(userController.addFavorites(registerdUser.email, moviesWithoutAddedAt, token))

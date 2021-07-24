@@ -10,14 +10,16 @@ const getMoviesMock = jest.fn();
 const registerUserMock = jest.fn();
 const loginMock = jest.fn();
 const logoutMock = jest.fn();
-const addFavoriteMock = jest.fn();
+const addFavoritesMock = jest.fn();
+const getFavoritesMock = jest.fn();
 UserController.mockImplementation(
     () => ({
       getMovies: getMoviesMock,
       register: registerUserMock,
       login: loginMock,
       logout: logoutMock,
-      addFavorites: addFavoriteMock,
+      addFavorites: addFavoritesMock,
+      getFavorites: getFavoritesMock,
     }),
 );
 
@@ -34,8 +36,8 @@ afterEach(()=>{
   loginMock.mock.calls = [];
   logoutMock.mockRestore();
   logoutMock.mock.calls = [];
-  addFavoriteMock.mockRestore();
-  addFavoriteMock.mock.calls = [];
+  addFavoritesMock.mockRestore();
+  addFavoritesMock.mock.calls = [];
 });
 
 describe('Get movies tests', () =>{
@@ -258,7 +260,7 @@ describe('Logout tests', () =>{
 
 describe('Add favorites tests', () =>{
   test('Add favorites to authenticated user', async () => {
-    addFavoriteMock.mockImplementation(() => {
+    addFavoritesMock.mockImplementation(() => {
       return true;
     });
     const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
@@ -269,14 +271,14 @@ describe('Add favorites tests', () =>{
         .send(testData.addFavoriteEntry)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
-    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
-    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
+    expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(response.status).toBe(200);
   });
 
   test('Add favorites with unregistered email', async () => {
-    addFavoriteMock.mockImplementation(() => {
+    addFavoritesMock.mockImplementation(() => {
       return false;
     });
     const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
@@ -287,15 +289,15 @@ describe('Add favorites tests', () =>{
         .send(testData.addFavoriteEntry)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
-    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
-    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
+    expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(response.status).toBe(401);
     expect(response.body).toBe('Error: the email entered does not match the token received');
   });
 
   test('Add favorites without matching user-token pair', async () => {
-    addFavoriteMock.mockImplementation(() => {
+    addFavoritesMock.mockImplementation(() => {
       throw new InvalidTokenError(
           'Error: the received token is not registered or does not belong to the email received.',
       );
@@ -308,9 +310,9 @@ describe('Add favorites tests', () =>{
         .send(testData.addFavoriteEntry)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
-    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
-    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
+    expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
     expect(response.status).toBe(401);
     expect(response.body).toBe(
         'Error: the received token is not registered or does not belong to the email received.',
@@ -318,7 +320,7 @@ describe('Add favorites tests', () =>{
   });
 
   test('Add favorites unexpected error', async () => {
-    addFavoriteMock.mockImplementation(() => {
+    addFavoritesMock.mockImplementation(() => {
       throw new UnexpectedError('Error description');
     });
     const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
@@ -329,15 +331,15 @@ describe('Add favorites tests', () =>{
         .send(testData.addFavoriteEntry)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
-    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
-    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
+    expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
     expect(response.status).toBe(500);
     expect(response.body).toBe('Error: Unexpected Error');
   });
 
   test('Add favorites with invalid add favorite entry', async () => {
-    addFavoriteMock.mockImplementation(() => {
+    addFavoritesMock.mockImplementation(() => {
       throw new UnexpectedError('Error description');
     });
     const response = await request.post('/addFavorites')
@@ -347,7 +349,7 @@ describe('Add favorites tests', () =>{
         .send(testData.invalidAddFavoriteEntry)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(addFavoriteMock.mock.calls.length).toBe(0);
+    expect(addFavoritesMock.mock.calls.length).toBe(0);
     expect(response.status).toBe(400);
   });
 
@@ -359,8 +361,28 @@ describe('Add favorites tests', () =>{
         .send(testData.addFavoriteEntry)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(addFavoriteMock.mock.calls.length).toBe(0);
+    expect(addFavoritesMock.mock.calls.length).toBe(0);
     expect(response.status).toBe(401);
     expect(response.body).toBe('Error: the specified token is invalid.');
+  });
+});
+
+
+describe('Get favorites tests', () =>{
+  test('Get favorites from user with favorites', async () => {
+    getFavoritesMock.mockImplementation(() => {
+      return testData.addFavoriteArrayResponse;
+    });
+    const response = await request.get('/addFavorites')
+        .query({
+          token: 'It8GNmSOj8g137BSRbEa',
+          email: 'pepep@gmail.com',
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
+    expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('pepep@gmail.com');
+    expect(response.status).toBe(200);
+    expect(response.body).toBe(testData.addFavoriteArrayResponse);
   });
 });
