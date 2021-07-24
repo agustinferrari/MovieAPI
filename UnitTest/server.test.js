@@ -26,12 +26,18 @@ describe('Get movies tests', () =>{
   const keywordMovies =
   JSON.parse('['+testData.movie4 +','+ testData.movie5 +','+ testData.movie6+']');
 
+  afterEach(()=>{
+    jest.resetAllMocks();
+  });
+
+
   test('Get movies from authenticated user without keyword', async () => {
     getMoviesMock.mockResolvedValue(popularMovies);
     const response = await request.get('/getMovies').query({
       token: 's6ra092t080te2t12',
     });
     expect(response.body.message).toStrictEqual(popularMovies);
+    expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('s6ra092t080te2t12');
     expect(response.status).toBe(200);
   });
 
@@ -42,6 +48,8 @@ describe('Get movies tests', () =>{
       keyword: 'Man',
     });
     expect(response.body.message).toStrictEqual(keywordMovies);
+    expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('s6ra092t080te2t12');
+    expect(getMoviesMock.mock.calls[0][1]).toStrictEqual('Man');
     expect(response.status).toBe(200);
   });
 
@@ -81,11 +89,38 @@ describe('Get movies tests', () =>{
 
 describe('Register user tests', () =>{
   test('Register unregistered user', async () => {
-    registerUserMock.mockResolvedValue(true);
-    const newUser = testData.userJuanaJSON;
+    registerUserMock.mockImplementation(() => {
+      return true;
+    });
+    const newUser = JSON.parse(testData.userJuanaJSON);
     const response = await request.post('/registerUser')
-        .send(newUser)
-        .set('Content-Type', 'application/json');
+        .send(testData.userJuanaJSON)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(registerUserMock.mock.calls[0][0]).toStrictEqual(newUser);
     expect(response.status).toBe(200);
+  });
+
+  test('Register registered user', async () => {
+    registerUserMock.mockImplementation(() => {
+      return false;
+    });
+    const newUser = JSON.parse(testData.userJuanaJSON);
+    const response = await request.post('/registerUser')
+        .send(testData.userJuanaJSON)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(registerUserMock.mock.calls[0][0]).toStrictEqual(newUser);
+    expect(response.status).toBe(400);
+  });
+
+  test('Register invalid user', async () => {
+    registerUserMock.mock.calls = [];
+    const response = await request.post('/registerUser')
+        .send(testData.invalidJSONUser)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(registerUserMock.mock.calls.length).toBe(0);
+    expect(response.status).toBe(400);
   });
 });

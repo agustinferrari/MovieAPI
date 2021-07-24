@@ -3,151 +3,123 @@ const {TestData} = require('./testData.js');
 class ValidatorTestData {
   constructor() {
     this.testData = new TestData();
-    this.invalidJSON1 = '{' +
-      '"email" "juanasanchez@gmail.com",' +
-      '"firstName" "Juana",' +
-      '"lastName" "Sanchez",' +
-      '"password" "password12345"' +
-    '}';
-    this.invalidJSON2 = '{' +
-      '"email": "juanasanchez@gmail.com",' +
-      '"fi}';
-    this.invalidJSON3 = '{' +
-      '"email": "juanasanchez@gmail.com",' +
+    this.invalidUser1 = JSON.parse('{' +
       '"firstName": "Juana",' +
       '"lastName": "Sanchez",' +
-      '"password": "password12345"';
-    this.invalidJSON4 =
+      '"password": "password12345"' +
+    '}');
+    this.invalidUser2 = JSON.parse('{' +
+      '"email": "juanasanchez@gmail.com",' +
+      '"lastName": "Sanchez",' +
+      '"password": "password12345"' +
+    '}');
+    this.invalidUser3 = JSON.parse('{' +
       '"email": "juanasanchez@gmail.com",' +
       '"firstName": "Juana",' +
-      '"lastName": "Sanchez",' +
-      '"password": "password12345"';
-    this.invalidJSON5 = '{' +
-      '"email": "juanasanchez@gmail.com"' +
-      '"firstName": "Juana"' +
+      '"password": "password12345"' +
+    '}');
+    this.invalidUser4 = JSON.parse('{' +
+      '"email": "juanasanchez@gmail.com",' +
+      '"firstName": "Juana",' +
       '"lastName": "Sanchez"' +
-      '"password": "password12345"';
-    this.invalidJSONArray = [this.invalidJSON1, this.invalidJSON2,
-      this.invalidJSON3, this.invalidJSON4, this.invalidJSON5];
-
-    this.invalidUser1 = '{' +
-      '"firstName": "Juana",' +
-      '"lastName": "Sanchez",' +
-      '"password": "password12345"' +
-    '}';
-    this.invalidUser2 = '{' +
-      '"email": "juanasanchez@gmail.com",' +
-      '"lastName": "Sanchez",' +
-      '"password": "password12345"' +
-    '}';
-    this.invalidUser3 = '{' +
-      '"email": "juanasanchez@gmail.com",' +
-      '"firstName": "Juana",' +
-      '"password": "password12345"' +
-    '}';
-    this.invalidUser4 = '{' +
-      '"email": "juanasanchez@gmail.com",' +
-      '"firstName": "Juana",' +
-      '"lastName": "Sanchez",' +
-    '}';
-    this.invalidUser5 = '{' +
+    '}');
+    this.invalidUser5 = JSON.parse('{' +
       '"email": "",' +
       '"firstName": "Juana",' +
       '"lastName": "Sanchez",' +
       '"password": "password12345"' +
-    '}';
-    this.invalidUser6 = '{' +
+    '}');
+    this.invalidUser6 = JSON.parse('{' +
       '"email": "juanasanchez@gmail.com",' +
       '"firstName": "",' +
       '"lastName": "Sanchez",' +
       '"password": "password12345"' +
-    '}';
-    this.invalidUser7 = '{' +
+    '}');
+    this.invalidUser7 = JSON.parse('{' +
       '"email": "juanasanchez@gmail.com",' +
       '"firstName": "Juana",' +
       '"lastName": "",' +
       '"password": "password12345"' +
-    '}';
-    this.invalidUser8 = '{' +
+    '}');
+    this.invalidUser8 = JSON.parse('{' +
       '"email": "juanasanchez@gmail.com",' +
       '"firstName": "Juana",' +
       '"lastName": "Sanchez",' +
       '"password": ""' +
-    '}';
-    this.validUser = '{' +
+    '}');
+    this.validUser = JSON.parse('{' +
       '"email": "juanasanchez@gmail.com",' +
       '"firstName": "Juana",' +
       '"lastName": "Sanchez",' +
       '"password": "password12345"' +
-    '}';
+    '}');
     this.invalidUserArray = [this.invalidUser1, this.invalidUser2,
       this.invalidUser3, this.invalidUser4, this.invalidUser5,
-      this.invalidUser6, this.invalidUser7, this.invalidUser8,
-      this.invalidJSON1];
+      this.invalidUser6, this.invalidUser7, this.invalidUser8];
 
-    this.invalidLogin1 = '{' +
+    this.invalidLogin1 = JSON.parse('{' +
       '"password": "password12345"' +
-    '}';
-    this.invalidLogin2 = '{' +
-    '"email": "juanasanchez@gmail.com",' +
-    '}';
-    this.validLogin = '{' +
+    '}');
+    this.invalidLogin2 = JSON.parse('{' +
+    '"email": "juanasanchez@gmail.com"' +
+    '}');
+    this.validLogin = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"password": "password12345"' +
-    '}';
-    this.invalidLoginArray = [this.invalidLogin1, this.invalidLogin2, this.invalidJSON1];
+    '}');
+    this.invalidLoginArray = [this.invalidLogin1, this.invalidLogin2];
 
-    this.validAddFavorite = '{' +
+    this.validAddFavorite = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"movies": [' +
     this.testData.movie1 +','+
     this.testData.movie2 + ','+
     this.testData.movie3+']' +
-    '}';
-    this.invalidAddFavorite1 = '{' +
+    '}');
+    this.invalidAddFavorite1 = JSON.parse('{' +
     '"notemail": "juanasanchez@gmail.com",' +
     '"movies": [' +
     this.testData.movie1 +','+
     this.testData.movie2 + ','+
     this.testData.movie3+']' +
-    '}';
-    this.invalidAddFavorite2 = '{' +
+    '}');
+    this.invalidAddFavorite2 = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"movies": []' +
-    '}';
-    this.invalidAddFavorite3 = '{' +
-    '"email": "juanasanchez@gmail.com"}';
+    '}');
+    this.invalidAddFavorite3 = JSON.parse('{' +
+    '"email": "juanasanchez@gmail.com"}');
 
-    this.invalidAddFavorite4 = '{' +
+    this.invalidAddFavorite4 = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"movies": [{' +
-    '"title": "Superman",'+
+    '"title": "Superman"'+
     '}]' +
-    '}';
-    this.invalidAddFavorite5 = '{' +
+    '}');
+    this.invalidAddFavorite5 = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"movies": [{' +
     '"title": "Superman",'+
     '"id": "-45"'+
     '}]' +
-    '}';
-    this.invalidAddFavorite6 = '{' +
+    '}');
+    this.invalidAddFavorite6 = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"movies": [{' +
     '"title": "Superman",'+
     '"id": "notNumber"'+
     '}]' +
-    '}';
-    this.invalidAddFavorite7 = '{' +
+    '}');
+    this.invalidAddFavorite7 = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"movies": [{' +
     '"title": "Superman",'+
     '"id": ""'+
     '}]' +
-    '}';
+    '}');
     this.invalidAddFavoriteArray = [this.invalidAddFavorite1, this.invalidAddFavorite2,
       this.invalidAddFavorite3, this.invalidAddFavorite4, this.invalidAddFavorite5,
-      this.invalidAddFavorite6, this.invalidAddFavorite7, this.invalidJSON1];
+      this.invalidAddFavorite6, this.invalidAddFavorite7];
   }
 }
 

@@ -4,8 +4,12 @@ const {InvalidTokenError} = require('./utils/customExceptions/invalidTokenError.
 const {InvalidEmailError} = require('./utils/customExceptions/invalidEmailError.js');
 const {InvalidPasswordError} = require('./utils/customExceptions/invalidPasswordError.js');
 const {UserController} = require('./logic/userController.js');
+const {Validator} = require('./utils/validator.js');
+const validator = new Validator();
 const userController = new UserController();
+
 const app = express();
+app.use(express.json());
 app.listen(3000);
 
 app.get('/getMovies', async (req, res) => {
@@ -26,5 +30,13 @@ app.get('/getMovies', async (req, res) => {
   }
 });
 
+app.post('/registerUser', async (req, res) => {
+  const user = req.body;
+  if (validator.isValidUser(user) && userController.register(user)) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(400);
+  }
+});
 
 module.exports = app;
