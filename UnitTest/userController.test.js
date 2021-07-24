@@ -74,7 +74,8 @@ describe('Login/Logout tests', () =>{
       password: 'password12345',
     };
     existsSpy.mockReturnValue(true);
-    expect(userController.login(user.email, user.password)).toBeTruthy();
+    const newToken = userController.login(user.email, user.password);
+    checkTokenValidity(newToken);
     countSessionTest(user.email, 1);
   });
 
@@ -84,7 +85,8 @@ describe('Login/Logout tests', () =>{
       password: '424pass2343421',
     };
     existsSpy.mockReturnValue(true);
-    expect(userController.login(user.email, user.password)).toBeTruthy();
+    const newToken = userController.login(user.email, user.password);
+    checkTokenValidity(newToken);
     countSessionTest(user.email, 1);
   });
 

@@ -10,7 +10,7 @@ const userController = new UserController();
 
 const app = express();
 app.use(express.json());
-app.listen(3000);
+// app.listen(3000);
 
 app.get('/getMovies', async (req, res) => {
   const token = req.query.token;

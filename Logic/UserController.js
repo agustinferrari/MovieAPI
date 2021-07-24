@@ -41,13 +41,13 @@ class UserController {
       };
       this.sessionArray.push(sessionEntry);
     }
+    return newToken;
   }
 
   login(userEmail, userPassword) {
     if (this.userDataAccess.exists(userEmail)) {
       if (this.userDataAccess.login(userEmail, userPassword)) {
-        this.addSession(userEmail);
-        return true;
+        return this.addSession(userEmail); ;
       }
       throw new InvalidPasswordError('Error: the password received is incorrect.');
     }

@@ -8,10 +8,12 @@ const {UserController} = require('./../logic/userController.js');
 jest.mock('./../logic/userController.js');
 const getMoviesMock = jest.fn();
 const registerUserMock = jest.fn();
+const loginMock = jest.fn();
 UserController.mockImplementation(
     () => ({
       getMovies: getMoviesMock,
       register: registerUserMock,
+      login: loginMock,
     }),
 );
 
@@ -134,3 +136,5 @@ describe('Register user tests', () =>{
     expect(response.status).toBe(400);
   });
 });
+
+
