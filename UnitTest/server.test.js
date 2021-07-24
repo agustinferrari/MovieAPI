@@ -123,4 +123,14 @@ describe('Register user tests', () =>{
     expect(registerUserMock.mock.calls.length).toBe(0);
     expect(response.status).toBe(400);
   });
+
+  test('Register invalid user', async () => {
+    registerUserMock.mock.calls = [];
+    const response = await request.post('/registerUser')
+        .send(testData.invalidUser)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(registerUserMock.mock.calls.length).toBe(0);
+    expect(response.status).toBe(400);
+  });
 });

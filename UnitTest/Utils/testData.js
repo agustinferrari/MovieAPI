@@ -35,6 +35,9 @@ class TestData {
     this.invalidJSONUser = '{' +
       '"email": "juanasanchez@gmail.com",' +
       '"firstName": "Juana",';
+    this.invalidUser = '{' +
+      '"email": "juanasanchez@gmail.com",' +
+      '"firstName": "Juana"}';
   }
 
   testFilesInitialize() {
