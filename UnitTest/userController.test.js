@@ -207,7 +207,8 @@ describe('Add favorite tests', () =>{
     const moviesWithAddedAt = JSON.parse(testData.addFavoriteArrayRespose);
     spy.mockReturnValue(true);
     const token = userController.sessionArray[0].token;
-    expect(userController.addFavorite(registerdUser, moviesWithoutAddedAt, token)).toBeTruthy();
+    expect(userController.addFavorites(registerdUser.email, moviesWithoutAddedAt, token))
+        .toBeTruthy();
     const firstMovie = spy.mock.calls[0][1];
     expect(firstMovie).toStrictEqual(moviesWithAddedAt[0]);
     const secondMovie = spy.mock.calls[1][1];
@@ -225,7 +226,7 @@ describe('Add favorite tests', () =>{
     spy.mockReturnValue(false);
     const token = userController.sessionArray[0].token;
     expect(() => {
-      userController.addFavorite(registerdUser, moviesWithoutAddedAt, token);
+      userController.addFavorites(registerdUser.email, moviesWithoutAddedAt, token);
     }).toThrow(InvalidTokenError);
     expect(spy.mock.calls.length).toBe(0);
   });

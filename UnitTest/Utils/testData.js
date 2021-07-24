@@ -20,6 +20,10 @@ class TestData {
     this.movie2WithoutAddedAt = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133}';
     this.addFavoriteArray = '['+ this.movie1WithoutAddedAt + ',' + this.movie2WithoutAddedAt +']';
     this.addFavoriteArrayRespose = '['+ this.movie3 + ',' + this.movie2 +']';
+    this.addFavoriteEntry ='{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '"movies": '+ this.addFavoriteArray +
+    '}';
     this.favoriteTestData = '[{"userId": "juanasanchez@gmail.com",'+
       '"favorites":['+ this.movie1 +','+ this.movie2 +']}]';
     this.userJuanaJSON = '{' +

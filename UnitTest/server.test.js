@@ -253,3 +253,23 @@ describe('Logout tests', () =>{
     expect(response.body).toBe('Error: the specified token is invalid.');
   });
 });
+
+describe('Add favorites tests', () =>{
+  test('Add favorites to authenticated user', async () => {
+    addFavoriteMock.mockImplementation(() => {
+      return true;
+    });
+    const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
+    const response = await request.post('/addFavorites')
+        .query({
+          token: 'It8G37BSRbEa',
+        })
+        .send(testData.addFavoriteEntry)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual('It8G37BSRbEa');
+    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual(addFavoriteEntry.movies);
+    expect(response.status).toBe(200);
+  });
+});

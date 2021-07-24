@@ -67,13 +67,13 @@ class UserController {
     return this.userDataAccess.register(user);
   }
 
-  addFavorite(user, movies, token) {
-    if (this.tokenBelongsToUser(user.email, token)) {
+  addFavorites(email, movies, token) {
+    if (this.tokenBelongsToUser(email, token)) {
       let result = true;
       for (let i = 0; i < movies.length; i++) {
         const movie = movies[i];
         movie.addedAt = new Date().toISOString().slice(0, 10);
-        result = result && this.userDataAccess.addFavorite(user.email, movie);
+        result = result && this.userDataAccess.addFavorite(email, movie);
       }
       return result;
     } else {
