@@ -138,3 +138,19 @@ describe('Register user tests', () =>{
 });
 
 
+describe('Login tests', () =>{
+  test('Login with registered user', async () => {
+    loginMock.mockImplementation(() => {
+      return 'r21sF34Ti55n4fN4S5uf6';
+    });
+    const loginEntry = JSON.parse(testData.loginJSON);
+    const response = await request.post('/registerUser')
+        .send(testData.loginJSON)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(registerUserMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
+    expect(registerUserMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
+    expect(response.status).toBe(200);
+    expect(response.body).toBe('r21sF34Ti55n4fN4S5uf6');
+  });
+});
