@@ -17,7 +17,7 @@ UserController.mockImplementation(
       register: registerUserMock,
       login: loginMock,
       logout: logoutMock,
-      addFavorite: addFavoriteMock,
+      addFavorites: addFavoriteMock,
     }),
 );
 
@@ -34,6 +34,8 @@ afterEach(()=>{
   loginMock.mock.calls = [];
   logoutMock.mockRestore();
   logoutMock.mock.calls = [];
+  addFavoriteMock.mockRestore();
+  addFavoriteMock.mock.calls = [];
 });
 
 describe('Get movies tests', () =>{
@@ -262,14 +264,103 @@ describe('Add favorites tests', () =>{
     const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
     const response = await request.post('/addFavorites')
         .query({
-          token: 'It8G37BSRbEa',
+          token: 'It8GNmSOj8g137BSRbEa',
         })
         .send(testData.addFavoriteEntry)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
-    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual('It8G37BSRbEa');
-    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(response.status).toBe(200);
+  });
+
+  test('Add favorites with unregistered email', async () => {
+    addFavoriteMock.mockImplementation(() => {
+      return false;
+    });
+    const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
+    const response = await request.post('/addFavorites')
+        .query({
+          token: 'It8GNmSOj8g137BSRbEa',
+        })
+        .send(testData.addFavoriteEntry)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
+    expect(response.status).toBe(401);
+    expect(response.body).toBe('Error: the email entered does not match the token received');
+  });
+
+  test('Add favorites without matching user-token pair', async () => {
+    addFavoriteMock.mockImplementation(() => {
+      throw new InvalidTokenError(
+          'Error: the received token is not registered or does not belong to the email received.',
+      );
+    });
+    const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
+    const response = await request.post('/addFavorites')
+        .query({
+          token: '3z92NmTFj8g137BS2312',
+        })
+        .send(testData.addFavoriteEntry)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
+    expect(response.status).toBe(401);
+    expect(response.body).toBe(
+        'Error: the received token is not registered or does not belong to the email received.',
+    );
+  });
+
+  test('Add favorites unexpected error', async () => {
+    addFavoriteMock.mockImplementation(() => {
+      throw new UnexpectedError('Error description');
+    });
+    const addFavoriteEntry = JSON.parse(testData.addFavoriteEntry);
+    const response = await request.post('/addFavorites')
+        .query({
+          token: '3z92NmTFj8g137BS2312',
+        })
+        .send(testData.addFavoriteEntry)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(addFavoriteMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
+    expect(addFavoriteMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
+    expect(addFavoriteMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
+    expect(response.status).toBe(500);
+    expect(response.body).toBe('Error: Unexpected Error');
+  });
+
+  test('Add favorites with invalid add favorite entry', async () => {
+    addFavoriteMock.mockImplementation(() => {
+      throw new UnexpectedError('Error description');
+    });
+    const response = await request.post('/addFavorites')
+        .query({
+          token: '3z92NmTFj8g137BS2312',
+        })
+        .send(testData.invalidAddFavoriteEntry)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(addFavoriteMock.mock.calls.length).toBe(0);
+    expect(response.status).toBe(400);
+  });
+
+  test('Add favorites with invalid token', async () => {
+    const response = await request.post('/addFavorites')
+        .query({
+          token: '3z92NmTFj',
+        })
+        .send(testData.addFavoriteEntry)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(addFavoriteMock.mock.calls.length).toBe(0);
+    expect(response.status).toBe(401);
+    expect(response.body).toBe('Error: the specified token is invalid.');
   });
 });

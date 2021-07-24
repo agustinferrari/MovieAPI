@@ -73,4 +73,30 @@ app.post('/logout', async (req, res) => {
   }
 });
 
+app.post('/addFavorites', async (req, res) => {
+  const token = req.query.token;
+  const addFavoritesEntry = req.body;
+  if (validator.isValidToken(token)) {
+    if (validator.isValidAddFavorite(addFavoritesEntry)) {
+      try {
+        if (userController.addFavorites(addFavoritesEntry.email, addFavoritesEntry.movies, token)) {
+          res.sendStatus(200);
+        } else {
+          res.status(401).json('Error: the email entered does not match the token received');
+        }
+      } catch (error) {
+        if (error instanceof InvalidTokenError) {
+          res.status(401).json(error.message);
+        } else {
+          res.status(500).json('Error: Unexpected Error');
+        }
+      }
+    } else {
+      res.sendStatus(400);
+    }
+  } else {
+    res.status(401).json('Error: the specified token is invalid.');
+  }
+});
+
 module.exports = app;

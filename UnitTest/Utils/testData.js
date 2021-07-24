@@ -24,6 +24,9 @@ class TestData {
     '"email": "juanasanchez@gmail.com",' +
     '"movies": '+ this.addFavoriteArray +
     '}';
+    this.invalidAddFavoriteEntry ='{' +
+    '"email": "juanasanchez@gmail.com"' +
+    '}';
     this.favoriteTestData = '[{"userId": "juanasanchez@gmail.com",'+
       '"favorites":['+ this.movie1 +','+ this.movie2 +']}]';
     this.userJuanaJSON = '{' +
