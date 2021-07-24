@@ -7,9 +7,11 @@ const testData = new TestData();
 const {UserController} = require('./../logic/userController.js');
 jest.mock('./../logic/userController.js');
 const getMoviesMock = jest.fn();
+const registerUserMock = jest.fn();
 UserController.mockImplementation(
     () => ({
       getMovies: getMoviesMock,
+      register: registerUserMock,
     }),
 );
 
@@ -62,6 +64,7 @@ describe('Get movies tests', () =>{
       token: '89ts90ruylhn3keit0',
     });
     expect(response.status).toBe(500);
+    expect(response.body).toBe('Error: Unexpected Error');
   });
 
   test('Get movies HTTPRequestError', async () => {
@@ -73,5 +76,16 @@ describe('Get movies tests', () =>{
     });
     expect(response.status).toBe(502);
     expect(response.body).toBe('Error: Error while sending request to TheMovieDB.');
+  });
+});
+
+describe('Register user tests', () =>{
+  test('Register unregistered user', async () => {
+    registerUserMock.mockResolvedValue(true);
+    const newUser = testData.userJuanaJSON;
+    const response = await request.post('/registerUser')
+        .send(newUser)
+        .set('Content-Type', 'application/json');
+    expect(response.status).toBe(200);
   });
 });

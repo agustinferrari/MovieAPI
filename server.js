@@ -8,7 +8,7 @@ const userController = new UserController();
 const app = express();
 app.listen(3000);
 
-app.get('/getMovies/', async (req, res) => {
+app.get('/getMovies', async (req, res) => {
   const token = req.query.token;
   const keyword = req.query.keyword;
   try {
@@ -21,9 +21,10 @@ app.get('/getMovies/', async (req, res) => {
     } else if (error instanceof HTTPRequestError) {
       res.status(502).json(error.message);
     } else {
-      res.status(500).json();
+      res.status(500).json('Error: Unexpected Error');
     }
   }
 });
+
 
 module.exports = app;
