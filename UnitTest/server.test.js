@@ -9,11 +9,13 @@ jest.mock('./../logic/userController.js');
 const getMoviesMock = jest.fn();
 const registerUserMock = jest.fn();
 const loginMock = jest.fn();
+const logoutMock = jest.fn();
 UserController.mockImplementation(
     () => ({
       getMovies: getMoviesMock,
       register: registerUserMock,
       login: loginMock,
+      logout: logoutMock,
     }),
 );
 
@@ -219,5 +221,19 @@ describe('Login tests', () =>{
         .set('Accept', 'application/json');
     expect(loginMock.mock.calls.length).toBe(0);
     expect(response.status).toBe(400);
+  });
+});
+
+
+describe('Logout tests', () =>{
+  test('Logout valid token', async () => {
+    const response = await request.post('/login')
+        .query({
+          token: 'It8GNmSOj8g137BSRbEa',
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(logoutMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
+    expect(response.status).toBe(200);
   });
 });
