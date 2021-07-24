@@ -30,6 +30,8 @@ afterEach(()=>{
   registerUserMock.mock.calls = [];
   loginMock.mockRestore();
   loginMock.mock.calls = [];
+  logoutMock.mockRestore();
+  logoutMock.mock.calls = [];
 });
 
 describe('Get movies tests', () =>{
@@ -227,7 +229,7 @@ describe('Login tests', () =>{
 
 describe('Logout tests', () =>{
   test('Logout valid token', async () => {
-    const response = await request.post('/login')
+    const response = await request.post('/logout')
         .query({
           token: 'It8GNmSOj8g137BSRbEa',
         })
@@ -235,5 +237,17 @@ describe('Logout tests', () =>{
         .set('Accept', 'application/json');
     expect(logoutMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(response.status).toBe(200);
+  });
+
+  test('Logout invalid token', async () => {
+    const response = await request.post('/logout')
+        .query({
+          token: 'It8G37BSRbEa',
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(logoutMock.mock.calls.length).toBe(0);
+    expect(response.status).toBe(401);
+    expect(response.body).toBe('Error: the specified token is invalid.');
   });
 });

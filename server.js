@@ -63,4 +63,14 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/logout', async (req, res) => {
+  const token = req.query.token;
+  if (validator.isValidToken(token)) {
+    userController.logout(token);
+    res.sendStatus(200);
+  } else {
+    res.status(401).json('Error: the specified token is invalid.');
+  }
+});
+
 module.exports = app;
