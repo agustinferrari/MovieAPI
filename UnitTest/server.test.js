@@ -54,9 +54,9 @@ describe('Get movies tests', () =>{
     const response = await request.get('/getMovies').query({
       token: 'EY3Z762DpcUR9eiGe6RR',
     });
-    expect(response.body).toStrictEqual(popularMovies);
+    checkResponseBodyStatus(response, popularMovies, 200);
     expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('EY3Z762DpcUR9eiGe6RR');
-    expect(response.status).toBe(200);
+    expect(getMoviesMock.mock.calls[0][1]).toStrictEqual(undefined);
   });
 
   test('Get movies from authenticated user with keyword', async () => {
@@ -65,11 +65,11 @@ describe('Get movies tests', () =>{
       token: 'It8GNmSOj8g137BSRbEa',
       keyword: 'Man',
     });
-    expect(response.body).toStrictEqual(keywordMovies);
+    checkResponseBodyStatus(response, keywordMovies, 200);
     expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(getMoviesMock.mock.calls[0][1]).toStrictEqual('Man');
-    expect(response.status).toBe(200);
   });
+
 
   test('Get movies from non-authenticated user without keyword', async () => {
     getMoviesMock.mockImplementation(() => {
@@ -78,8 +78,7 @@ describe('Get movies tests', () =>{
     const response = await request.get('/getMovies').query({
       token: 'It8GNmSOj8g137BSRbEa',
     });
-    expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the received token is not registered.');
+    checkResponseBodyStatus(response, 'Error: the received token is not registered.', 401);
   });
 
   test('Get movies without token', async () => {
@@ -87,8 +86,7 @@ describe('Get movies tests', () =>{
       throw new InvalidTokenError('Error: the received token is not registered.');
     });
     const response = await request.get('/getMovies');
-    expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the specified token is invalid.');
+    checkResponseBodyStatus(response, 'Error: the specified token is invalid.', 401);
   });
 
   test('Get movies unexpected error', async () => {
@@ -98,8 +96,7 @@ describe('Get movies tests', () =>{
     const response = await request.get('/getMovies').query({
       token: 'EY3Z762DpcUR9eiGe6RR',
     });
-    expect(response.status).toBe(500);
-    expect(response.body).toBe('Error: Unexpected Error');
+    checkResponseBodyStatus(response, 'Error: Unexpected Error', 500);
   });
 
   test('Get movies HTTPRequestError', async () => {
@@ -109,10 +106,10 @@ describe('Get movies tests', () =>{
     const response = await request.get('/getMovies').query({
       token: 'EY3Z762DpcUR9eiGe6RR',
     });
-    expect(response.status).toBe(502);
-    expect(response.body).toBe('Error: Error while sending request to TheMovieDB.');
+    checkResponseBodyStatus(response, 'Error: Error while sending request to TheMovieDB.', 502);
   });
 });
+
 
 describe('Register user tests', () =>{
   test('Register unregistered user', async () => {
@@ -125,7 +122,7 @@ describe('Register user tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(registerUserMock.mock.calls[0][0]).toStrictEqual(newUser);
-    expect(response.status).toBe(200);
+    checkResponseBodyStatus(response, {}, 200);
   });
 
   test('Register registered user', async () => {
@@ -138,7 +135,7 @@ describe('Register user tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(registerUserMock.mock.calls[0][0]).toStrictEqual(newUser);
-    expect(response.status).toBe(400);
+    checkResponseBodyStatus(response, {}, 400);
   });
 
   test('Register invalid user', async () => {
@@ -148,7 +145,7 @@ describe('Register user tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(registerUserMock.mock.calls.length).toBe(0);
-    expect(response.status).toBe(400);
+    checkResponseBodyStatus(response, {}, 400);
   });
 
   test('Register invalid user', async () => {
@@ -158,7 +155,7 @@ describe('Register user tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(registerUserMock.mock.calls.length).toBe(0);
-    expect(response.status).toBe(400);
+    checkResponseBodyStatus(response, {}, 400);
   });
 });
 
@@ -175,8 +172,7 @@ describe('Login tests', () =>{
         .set('Accept', 'application/json');
     expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
     expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
-    expect(response.status).toBe(200);
-    expect(response.body).toBe('r21sF34Ti55n4fN4S5uf6');
+    checkResponseBodyStatus(response, 'r21sF34Ti55n4fN4S5uf6', 200);
   });
 
   test('Login with unregistered user', async () => {
@@ -190,8 +186,11 @@ describe('Login tests', () =>{
         .set('Accept', 'application/json');
     expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
     expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
-    expect(response.status).toBe(409);
-    expect(response.body).toBe('Error: the email received is not linked to any account.');
+    checkResponseBodyStatus(
+        response,
+        'Error: the email received is not linked to any account.',
+        409,
+    );
   });
 
   test('Login with registered user but incorrect password', async () => {
@@ -205,8 +204,7 @@ describe('Login tests', () =>{
         .set('Accept', 'application/json');
     expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
     expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
-    expect(response.status).toBe(409);
-    expect(response.body).toBe('Error: the password received is incorrect.');
+    checkResponseBodyStatus(response, 'Error: the password received is incorrect.', 409);
   });
 
   test('Login with registered user but incorrect password', async () => {
@@ -220,8 +218,7 @@ describe('Login tests', () =>{
         .set('Accept', 'application/json');
     expect(loginMock.mock.calls[0][0]).toStrictEqual(loginEntry.email);
     expect(loginMock.mock.calls[0][1]).toStrictEqual(loginEntry.password);
-    expect(response.status).toBe(500);
-    expect(response.body).toBe('Error: Unexpected Error');
+    checkResponseBodyStatus(response, 'Error: Unexpected Error', 500);
   });
 
   test('Login with registered user but incorrect password', async () => {
@@ -230,7 +227,7 @@ describe('Login tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(loginMock.mock.calls.length).toBe(0);
-    expect(response.status).toBe(400);
+    checkResponseBodyStatus(response, {}, 400);
   });
 });
 
@@ -244,7 +241,7 @@ describe('Logout tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(logoutMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
-    expect(response.status).toBe(200);
+    checkResponseBodyStatus(response, {}, 200);
   });
 
   test('Logout invalid token', async () => {
@@ -255,8 +252,7 @@ describe('Logout tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(logoutMock.mock.calls.length).toBe(0);
-    expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the specified token is invalid.');
+    checkResponseBodyStatus(response, 'Error: the specified token is invalid.', 401);
   });
 });
 
@@ -276,7 +272,7 @@ describe('Add favorites tests', () =>{
     expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
     expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
     expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
-    expect(response.status).toBe(200);
+    checkResponseBodyStatus(response, {}, 200);
   });
 
   test('Add favorites with unregistered email', async () => {
@@ -294,8 +290,11 @@ describe('Add favorites tests', () =>{
     expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
     expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
     expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('It8GNmSOj8g137BSRbEa');
-    expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the email entered does not match the token received');
+    checkResponseBodyStatus(
+        response,
+        'Error: the email entered does not match the token received',
+        401,
+    );
   });
 
   test('Add favorites without matching user-token pair', async () => {
@@ -315,9 +314,10 @@ describe('Add favorites tests', () =>{
     expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
     expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
     expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
-    expect(response.status).toBe(401);
-    expect(response.body).toBe(
+    checkResponseBodyStatus(
+        response,
         'Error: the received token is not registered or does not belong to the email received.',
+        401,
     );
   });
 
@@ -336,8 +336,7 @@ describe('Add favorites tests', () =>{
     expect(addFavoritesMock.mock.calls[0][0]).toStrictEqual(addFavoriteEntry.email);
     expect(addFavoritesMock.mock.calls[0][1]).toStrictEqual(addFavoriteEntry.movies);
     expect(addFavoritesMock.mock.calls[0][2]).toStrictEqual('3z92NmTFj8g137BS2312');
-    expect(response.status).toBe(500);
-    expect(response.body).toBe('Error: Unexpected Error');
+    checkResponseBodyStatus(response, 'Error: Unexpected Error', 500);
   });
 
   test('Add favorites with invalid add favorite entry', async () => {
@@ -352,7 +351,7 @@ describe('Add favorites tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(addFavoritesMock.mock.calls.length).toBe(0);
-    expect(response.status).toBe(400);
+    checkResponseBodyStatus(response, {}, 400);
   });
 
   test('Add favorites with invalid token', async () => {
@@ -364,8 +363,7 @@ describe('Add favorites tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(addFavoritesMock.mock.calls.length).toBe(0);
-    expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the specified token is invalid.');
+    checkResponseBodyStatus(response, 'Error: the specified token is invalid.', 401);
   });
 });
 
@@ -384,8 +382,7 @@ describe('Get favorites tests', () =>{
         .set('Accept', 'application/json');
     expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('pepep@gmail.com');
     expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('It8GNmSOj8g137BSRbEa');
-    expect(response.status).toBe(200);
-    expect(response.body).toBe(testData.addFavoriteArrayResponse);
+    checkResponseBodyStatus(response, testData.addFavoriteArrayResponse, 200);
   });
 
   test('Get favorites without matching user-token pair', async () => {
@@ -403,9 +400,10 @@ describe('Get favorites tests', () =>{
         .set('Accept', 'application/json');
     expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('juan@gmail.com');
     expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('It8GNmSOj8g137BSRbEa');
-    expect(response.status).toBe(401);
-    expect(response.body).toBe(
+    checkResponseBodyStatus(
+        response,
         'Error: the received token is not registered or does not belong to the email received.',
+        401,
     );
   });
 
@@ -422,8 +420,7 @@ describe('Get favorites tests', () =>{
         .set('Accept', 'application/json');
     expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('juan@gmail.com');
     expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('It8GNmSOj8g137BSRbEa');
-    expect(response.status).toBe(500);
-    expect(response.body).toBe('Error: Unexpected Error');
+    checkResponseBodyStatus(response, 'Error: Unexpected Error', 500);
   });
 
   test('Get favorites with invalid token', async () => {
@@ -435,7 +432,11 @@ describe('Get favorites tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     expect(getFavoritesMock.mock.calls.length).toBe(0);
-    expect(response.status).toBe(401);
-    expect(response.body).toBe('Error: the specified token is invalid.');
+    checkResponseBodyStatus(response, 'Error: the specified token is invalid.', 401);
   });
 });
+
+function checkResponseBodyStatus(response, expectedBody, expectedStatus) {
+  expect(response.body).toStrictEqual(expectedBody);
+  expect(response.status).toBe(expectedStatus);
+}
