@@ -27,27 +27,16 @@ const app = require('./../server.js');
 const supertest = require('supertest');
 const request = supertest(app);
 
-afterEach(()=>{
-  getMoviesMock.mockRestore();
-  getMoviesMock.mock.calls = [];
-  registerUserMock.mockRestore();
-  registerUserMock.mock.calls = [];
-  loginMock.mockRestore();
-  loginMock.mock.calls = [];
-  logoutMock.mockRestore();
-  logoutMock.mock.calls = [];
-  addFavoritesMock.mockRestore();
-  addFavoritesMock.mock.calls = [];
-  getFavoritesMock.mockRestore();
-  getFavoritesMock.mock.calls = [];
-});
-
 describe('Get movies tests', () =>{
   const popularMovies =
   JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
   const keywordMovies =
   JSON.parse('['+testData.movie4 +','+ testData.movie5 +','+ testData.movie6+']');
 
+  afterEach(()=>{
+    getMoviesMock.mockRestore();
+    getMoviesMock.mock.calls = [];
+  });
 
   test('Get movies from authenticated user without keyword', async () => {
     getMoviesMock.mockResolvedValue(popularMovies);
@@ -110,6 +99,11 @@ describe('Get movies tests', () =>{
 
 
 describe('Register user tests', () =>{
+  afterEach(()=>{
+    registerUserMock.mockRestore();
+    registerUserMock.mock.calls = [];
+  });
+
   test('Register unregistered user', async () => {
     registerUserMock.mockImplementation(() => {
       return true;
@@ -157,6 +151,11 @@ describe('Register user tests', () =>{
 
 
 describe('Login tests', () =>{
+  afterEach(()=>{
+    loginMock.mockRestore();
+    loginMock.mock.calls = [];
+  });
+
   test('Login with registered user', async () => {
     loginMock.mockImplementation(() => {
       return 'r21sF34Ti55n4fN4S5uf6';
@@ -225,6 +224,11 @@ describe('Login tests', () =>{
 
 
 describe('Logout tests', () =>{
+  afterEach(()=>{
+    logoutMock.mockRestore();
+    logoutMock.mock.calls = [];
+  });
+
   test('Logout valid token', async () => {
     const response = await request.post('/logout')
         .query({
@@ -249,6 +253,11 @@ describe('Logout tests', () =>{
 });
 
 describe('Add favorites tests', () =>{
+  afterEach(()=>{
+    addFavoritesMock.mockRestore();
+    addFavoritesMock.mock.calls = [];
+  });
+
   test('Add favorites to authenticated user', async () => {
     addFavoritesMock.mockImplementation(() => {
       return true;
@@ -373,6 +382,11 @@ describe('Add favorites tests', () =>{
 
 
 describe('Get favorites tests', () =>{
+  afterEach(()=>{
+    getFavoritesMock.mockRestore();
+    getFavoritesMock.mock.calls = [];
+  });
+
   test('Get favorites from user with favorites', async () => {
     getFavoritesMock.mockImplementation(() => {
       return testData.addFavoriteArrayResponse;
