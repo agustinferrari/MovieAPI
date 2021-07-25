@@ -18,7 +18,7 @@ app.get('/getMovies', async (req, res) => {
   if (validator.isValidToken(token)) {
     try {
       userController.getMovies(token, keyword).then((result) => {
-        res.json({message: result});
+        res.json(result);
       });
     } catch (error) {
       if (error instanceof InvalidTokenError) {
@@ -93,6 +93,25 @@ app.post('/addFavorites', async (req, res) => {
       }
     } else {
       res.sendStatus(400);
+    }
+  } else {
+    res.status(401).json('Error: the specified token is invalid.');
+  }
+});
+
+app.get('/getFavorites', async (req, res) => {
+  const token = req.query.token;
+  const email = req.query.email;
+  if (validator.isValidToken(token)) {
+    try {
+      const result = userController.getFavorites(email, token);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof InvalidTokenError) {
+        res.status(401).json(error.message);
+      } else {
+        res.status(500).json('Error: Unexpected Error');
+      }
     }
   } else {
     res.status(401).json('Error: the specified token is invalid.');

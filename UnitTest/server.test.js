@@ -38,6 +38,8 @@ afterEach(()=>{
   logoutMock.mock.calls = [];
   addFavoritesMock.mockRestore();
   addFavoritesMock.mock.calls = [];
+  getFavoritesMock.mockRestore();
+  getFavoritesMock.mock.calls = [];
 });
 
 describe('Get movies tests', () =>{
@@ -52,7 +54,7 @@ describe('Get movies tests', () =>{
     const response = await request.get('/getMovies').query({
       token: 'EY3Z762DpcUR9eiGe6RR',
     });
-    expect(response.body.message).toStrictEqual(popularMovies);
+    expect(response.body).toStrictEqual(popularMovies);
     expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('EY3Z762DpcUR9eiGe6RR');
     expect(response.status).toBe(200);
   });
@@ -63,7 +65,7 @@ describe('Get movies tests', () =>{
       token: 'It8GNmSOj8g137BSRbEa',
       keyword: 'Man',
     });
-    expect(response.body.message).toStrictEqual(keywordMovies);
+    expect(response.body).toStrictEqual(keywordMovies);
     expect(getMoviesMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(getMoviesMock.mock.calls[0][1]).toStrictEqual('Man');
     expect(response.status).toBe(200);
@@ -373,16 +375,67 @@ describe('Get favorites tests', () =>{
     getFavoritesMock.mockImplementation(() => {
       return testData.addFavoriteArrayResponse;
     });
-    const response = await request.get('/addFavorites')
+    const response = await request.get('/getFavorites')
         .query({
           token: 'It8GNmSOj8g137BSRbEa',
           email: 'pepep@gmail.com',
         })
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
-    expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('It8GNmSOj8g137BSRbEa');
-    expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('pepep@gmail.com');
+    expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('pepep@gmail.com');
+    expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('It8GNmSOj8g137BSRbEa');
     expect(response.status).toBe(200);
     expect(response.body).toBe(testData.addFavoriteArrayResponse);
+  });
+
+  test('Get favorites without matching user-token pair', async () => {
+    getFavoritesMock.mockImplementation(() => {
+      throw new InvalidTokenError(
+          'Error: the received token is not registered or does not belong to the email received.',
+      );
+    });
+    const response = await request.get('/getFavorites')
+        .query({
+          token: 'It8GNmSOj8g137BSRbEa',
+          email: 'juan@gmail.com',
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('juan@gmail.com');
+    expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('It8GNmSOj8g137BSRbEa');
+    expect(response.status).toBe(401);
+    expect(response.body).toBe(
+        'Error: the received token is not registered or does not belong to the email received.',
+    );
+  });
+
+  test('Get favorites unexpected error', async () => {
+    getFavoritesMock.mockImplementation(() => {
+      throw new UnexpectedError('Error description');
+    });
+    const response = await request.get('/getFavorites')
+        .query({
+          token: 'It8GNmSOj8g137BSRbEa',
+          email: 'juan@gmail.com',
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(getFavoritesMock.mock.calls[0][0]).toStrictEqual('juan@gmail.com');
+    expect(getFavoritesMock.mock.calls[0][1]).toStrictEqual('It8GNmSOj8g137BSRbEa');
+    expect(response.status).toBe(500);
+    expect(response.body).toBe('Error: Unexpected Error');
+  });
+
+  test('Get favorites with invalid token', async () => {
+    const response = await request.get('/getFavorites')
+        .query({
+          token: 'GNmSOj8',
+          email: 'juan@gmail.com',
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    expect(getFavoritesMock.mock.calls.length).toBe(0);
+    expect(response.status).toBe(401);
+    expect(response.body).toBe('Error: the specified token is invalid.');
   });
 });
