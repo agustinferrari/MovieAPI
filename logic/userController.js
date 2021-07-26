@@ -1,4 +1,5 @@
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
+const {MovieDataAccess} = require('../dataAccess/movieDataAccess.js');
 const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError.js');
 const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError.js');
 const {InvalidEmailError} = require('../utils/customExceptions/invalidEmailError.js');
@@ -10,6 +11,7 @@ class UserController {
   constructor() {
     this.sessionArray = [];
     this.userDataAccess = new UserDataAccess('./users.txt', './favorites.txt');
+    this.movieDataAccess = new MovieDataAccess('');
   }
 
   generateToken() {
@@ -106,7 +108,7 @@ class UserController {
     if (this.isTokenValid(token)) {
       const apiKey = '';
       if (keyword) {
-        return this.makeKeywordRequest(apiKey, keyword).then(
+        return this.movieDataAccess.makeKeywordRequest(apiKey, keyword).then(
             function(moviesByKeyword) {
               for (let i = 0; i < moviesByKeyword.length; i++) {
                 const favorite = moviesByKeyword[i];
@@ -122,7 +124,7 @@ class UserController {
               throw error;
             });
       } else {
-        return this.makePopularRequest(apiKey).then(
+        return this.movieDataAccess.makePopularRequest(apiKey).then(
             function(popularMovies) {
               for (let i = 0; i < popularMovies.length; i++) {
                 const favorite = popularMovies[i];
@@ -141,38 +143,6 @@ class UserController {
     } else {
       throw new InvalidTokenError('Error: the received token is not registered.');
     }
-  }
-
-  makeKeywordRequest(apiKey, keyword) {
-    return new Promise((resolve, reject) => {
-      unirest.get('https://api.themoviedb.org/3/search/movie?api_key='+apiKey+
-                '&language=en-US&query='+keyword+'&page=1&include_adult=false')
-          .then(function(response) {
-            if (response.error) {
-              return reject(new HTTPRequestError(
-                  'Error: Error while sending request to TheMovieDB.',
-              ));
-            }
-            const moviesByKeyword = response.body.results;
-            return resolve(moviesByKeyword);
-          });
-    });
-  }
-
-  makePopularRequest(apiKey) {
-    return new Promise((resolve, reject) => {
-      unirest.get('https://api.themoviedb.org/3/movie/popular?'+
-              'api_key='+apiKey+'&language=en-US&page=1')
-          .then(function(response) {
-            if (response.error) {
-              return reject(new HTTPRequestError(
-                  'Error: Error while sending request to TheMovieDB.',
-              ));
-            }
-            const popularMovies = response.body.results;
-            return resolve(popularMovies);
-          });
-    });
   }
 
   tokenBelongsToUser(userEmail, token) {
