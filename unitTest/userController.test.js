@@ -319,9 +319,11 @@ describe('Get movies tests', () =>{
   beforeAll(() => {
     testData = new TestData();
     keywordMoviesMock =
-     JSON.parse('['+testData.movie1 +','+ testData.movie2 +','+ testData.movie3+']');
+     JSON.parse('['+ testData.movie1 +','+ testData.movie2 +','+ testData.movie3 + ',' +
+      testData.movie1WithoutAddedAt +']');
     popularMoviesMock=
-     JSON.parse('['+testData.movie4 +','+ testData.movie5 +','+ testData.movie6+']');
+     JSON.parse('['+testData.movie4 +','+ testData.movie5 +','+ testData.movie6 + ',' +
+     testData.movie2WithoutAddedAt +']');
     correctResponseKeyword = {
       status: 200,
       body:
@@ -355,13 +357,12 @@ describe('Get movies tests', () =>{
     unirest.get.mockRestore();
   });
 
-  test('Get movies with keyword from authenticated user', () => {
+  test('Get movies with keyword from authenticated user', async () => {
     unirest.get.mockResolvedValue(correctResponseKeyword);
     const validToken = userController.sessionArray[0].token;
-    return favorites = userController.getMovies(validToken, 'super').then((data) => {
-      expect(data).toBe(keywordMoviesMock);
-      expect(checkOrderedBySuggestion(keywordMoviesMock)).toBeTruthy();
-    });
+    const moviesReceived = await userController.getMovies(validToken, 'super');
+    expect(moviesReceived).toBe(keywordMoviesMock);
+    expect(checkOrderedBySuggestion(moviesReceived)).toBeTruthy();
   });
 
   test('Get movies without keyword from non-authenticated user', async () => {
@@ -373,10 +374,9 @@ describe('Get movies tests', () =>{
   test('Get movies without keyword from authenticated user', async () => {
     unirest.get.mockResolvedValue(correctResponsePopular);
     const validToken = userController.sessionArray[0].token;
-    return favorites = userController.getMovies(validToken, '').then((data) => {
-      expect(data).toBe(popularMoviesMock);
-      expect(checkOrderedBySuggestion(keywordMoviesMock)).toBeTruthy();
-    });
+    const moviesReceived = await userController.getMovies(validToken, '');
+    expect(moviesReceived).toBe(popularMoviesMock);
+    expect(checkOrderedBySuggestion(moviesReceived)).toBeTruthy();
   });
 
   test('Error at getting movies without keyword from authenticated user', async () => {

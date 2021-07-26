@@ -106,9 +106,37 @@ class UserController {
     if (this.isTokenValid(token)) {
       const apiKey = '';
       if (keyword) {
-        return this.makeKeywordRequest(apiKey, keyword);
+        return this.makeKeywordRequest(apiKey, keyword).then(
+            function(moviesByKeyword) {
+              for (let i = 0; i < moviesByKeyword.length; i++) {
+                const favorite = moviesByKeyword[i];
+                const randomBetween0And99 = Math.floor(Math.random() * 100);
+                favorite.suggestionScore = randomBetween0And99;
+              }
+              moviesByKeyword.sort(
+                  (movieA, movieB) => (movieA.suggestionScore < movieB.suggestionScore) ? 1 : -1,
+              );
+              return moviesByKeyword;
+            },
+            function(error) {
+              throw error;
+            });
       } else {
-        return this.makePopularRequest(apiKey);
+        return this.makePopularRequest(apiKey).then(
+            function(popularMovies) {
+              for (let i = 0; i < popularMovies.length; i++) {
+                const favorite = popularMovies[i];
+                const randomBetween0And99 = Math.floor(Math.random() * 100);
+                favorite.suggestionScore = randomBetween0And99;
+              }
+              popularMovies.sort(
+                  (movieA, movieB) => (movieA.suggestionScore < movieB.suggestionScore) ? 1 : -1,
+              );
+              return popularMovies;
+            },
+            function(error) {
+              throw error;
+            });
       }
     } else {
       throw new InvalidTokenError('Error: the received token is not registered.');
@@ -126,14 +154,6 @@ class UserController {
               ));
             }
             const moviesByKeyword = response.body.results;
-            for (let i = 0; i < moviesByKeyword.length; i++) {
-              const favorite = moviesByKeyword[i];
-              const randomBetween0And99 = Math.floor(Math.random() * 100);
-              favorite.suggestionScore = randomBetween0And99;
-            }
-            moviesByKeyword.sort(
-                (movieA, movieB) => (movieA.suggestionScore < movieB.suggestionScore) ? 1 : -1,
-            );
             return resolve(moviesByKeyword);
           });
     });
@@ -150,14 +170,6 @@ class UserController {
               ));
             }
             const popularMovies = response.body.results;
-            for (let i = 0; i < popularMovies.length; i++) {
-              const favorite = popularMovies[i];
-              const randomBetween0And99 = Math.floor(Math.random() * 100);
-              favorite.suggestionScore = randomBetween0And99;
-            }
-            popularMovies.sort(
-                (movieA, movieB) => (movieA.suggestionScore < movieB.suggestionScore) ? 1 : -1,
-            );
             return resolve(popularMovies);
           });
     });

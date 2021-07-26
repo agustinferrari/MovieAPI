@@ -5,17 +5,17 @@ const pathToFavoritesFile = './unitTest/favoritesTest.txt';
 class TestData {
   constructor() {
     this.movie1 = '{"original_title": "Mikes New Car", "genre_ids": [ 16, 10751 ], "id": 13931,'+
-    ' "addedAt" : "2021-07-19"}';
+    ' "addedAt" : "'+new Date().toISOString().slice(0, 10)+'"}';
     this.movie2 = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133,'+
     ' "addedAt" : "'+new Date().toISOString().slice(0, 10)+'"}';
     this.movie3 = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423,'+
     ' "addedAt" : "'+new Date().toISOString().slice(0, 10)+'"}';
     this.movie4 = '{"original_title": "Superman", "genre_ids": [ 24 ], "id": 789532,'+
-    ' "addedAt" : "2021-02-29"}';
+    ' "addedAt" : "'+new Date().toISOString().slice(0, 10)+'"}';
     this.movie5 = '{"original_title": "Spiderman", "genre_ids": [ 4555, 4321 ], "id": 32468,'+
-    ' "addedAt" : "2021-01-14"}';
+    ' "addedAt" : "'+new Date().toISOString().slice(0, 10)+'"}';
     this.movie6 = '{"original_title": "Batman", "genre_ids": [ 21 ], "id": 34211,'+
-    ' "addedAt" : "2021-05-04"}';
+    ' "addedAt" : "'+new Date().toISOString().slice(0, 10)+'"}';
     this.movie1WithoutAddedAt = '{"original_title": "Fast man", "genre_ids": [ 434 ], "id": 63423}';
     this.movie2WithoutAddedAt = '{"original_title": "Cop Car", "genre_ids": [ 53 ], "id": 310133}';
     this.addFavoriteArray = '['+ this.movie1WithoutAddedAt + ',' + this.movie2WithoutAddedAt +']';
