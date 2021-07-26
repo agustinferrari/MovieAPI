@@ -9,8 +9,19 @@ const validator = new Validator();
 const userController = new UserController();
 
 const app = express();
-app.use(express.json());
-// app.listen(3000);
+
+app.use((req, res, next) => {
+  handleBadJSONError(express.json(), req, res, next);
+});
+function handleBadJSONError(middleware, req, res, next) {
+  middleware(req, res, (err) => {
+    if (err) {
+      return res.status(400).send('Error: Invalid JSON object received');
+    }
+    next();
+  });
+}
+app.listen(3000);
 
 app.get('/getMovies', async (req, res) => {
   const token = req.query.token;
@@ -22,29 +33,29 @@ app.get('/getMovies', async (req, res) => {
       });
     } catch (error) {
       if (error instanceof InvalidTokenError) {
-        res.status(401).json(error.message);
+        res.status(401).send(error.message);
       } else if (error instanceof HTTPRequestError) {
-        res.status(502).json(error.message);
+        res.status(502).send(error.message);
       } else {
-        res.status(500).json('Error: Unexpected Error');
+        res.status(500).send('Error: Unexpected Error');
       }
     }
   } else {
-    res.status(401).json('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token is invalid.');
   }
 });
 
 app.post('/registerUser', async (req, res) => {
   const user = req.body;
-  if (validator.isValidUser(user)) {
+  if (user !== undefined && validator.isValidUser(user)) {
     if (await userController.register(user)) {
       res.sendStatus(200);
     } else {
-      res.status(400).json('Error: there\'s already an'+
+      res.status(400).send('Error: there\'s already an'+
       ' existent account using the email entered.');
     }
   } else {
-    res.status(400).json('Error: the specified user is invalid,'+
+    res.status(400).send('Error: the specified user is invalid,'+
     ' it should be a valid JSON object with the expected properties'+
     ' (email, firstName, lastName, password).'); ;
   }
@@ -55,14 +66,14 @@ app.post('/login', async (req, res) => {
   if (validator.isValidLogin(loginEntry)) {
     try {
       const token = userController.login(loginEntry.email, loginEntry.password);
-      res.status(200).json(token);
+      res.status(200).send(token);
     } catch (error) {
       if (error instanceof InvalidEmailError) {
-        res.status(409).json(error.message);
+        res.status(409).send(error.message);
       } else if (error instanceof InvalidPasswordError) {
-        res.status(409).json(error.message);
+        res.status(409).send(error.message);
       } else {
-        res.status(500).json('Error: Unexpected Error');
+        res.status(500).send('Error: Unexpected Error');
       }
     }
   } else {
@@ -76,7 +87,7 @@ app.post('/logout', async (req, res) => {
     userController.logout(token);
     res.sendStatus(200);
   } else {
-    res.status(401).json('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token is invalid.');
   }
 });
 
@@ -89,20 +100,20 @@ app.post('/addFavorites', async (req, res) => {
         if (userController.addFavorites(addFavoritesEntry.email, addFavoritesEntry.movies, token)) {
           res.sendStatus(200);
         } else {
-          res.status(401).json('Error: the email entered does not match the token received');
+          res.status(401).send('Error: the email entered does not match the token received');
         }
       } catch (error) {
         if (error instanceof InvalidTokenError) {
-          res.status(401).json(error.message);
+          res.status(401).send(error.message);
         } else {
-          res.status(500).json('Error: Unexpected Error');
+          res.status(500).send('Error: Unexpected Error');
         }
       }
     } else {
       res.sendStatus(400);
     }
   } else {
-    res.status(401).json('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token is invalid.');
   }
 });
 
@@ -115,13 +126,13 @@ app.get('/getFavorites', async (req, res) => {
       res.status(200).json(result);
     } catch (error) {
       if (error instanceof InvalidTokenError) {
-        res.status(401).json(error.message);
+        res.status(401).send(error.message);
       } else {
-        res.status(500).json('Error: Unexpected Error');
+        res.status(500).send('Error: Unexpected Error');
       }
     }
   } else {
-    res.status(401).json('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token is invalid.');
   }
 });
 
