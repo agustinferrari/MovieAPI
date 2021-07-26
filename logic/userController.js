@@ -88,8 +88,8 @@ class UserController {
       const userFavorites = this.userDataAccess.getFavorites(userEmail);
       for (let i = 0; i < userFavorites.length; i++) {
         const favorite = userFavorites[i];
-        const randomSuggestion = this.getRandomBetween0And99();
-        favorite.suggestionForTodayScore = randomSuggestion;
+        const randomBetween0And99 = Math.floor(Math.random() * 100);
+        favorite.suggestionForTodayScore = randomBetween0And99;
       }
       userFavorites.sort(
           (favA, favB) => (favA.suggestionForTodayScore < favB.suggestionForTodayScore) ? 1 : -1,
@@ -125,7 +125,16 @@ class UserController {
                   'Error: Error while sending request to TheMovieDB.',
               ));
             }
-            return resolve(response.body.results);
+            const moviesByKeyword = response.body.results;
+            for (let i = 0; i < moviesByKeyword.length; i++) {
+              const favorite = moviesByKeyword[i];
+              const randomBetween0And99 = Math.floor(Math.random() * 100);
+              favorite.suggestionScore = randomBetween0And99;
+            }
+            moviesByKeyword.sort(
+                (movieA, movieB) => (movieA.suggestionScore < movieB.suggestionScore) ? 1 : -1,
+            );
+            return resolve(moviesByKeyword);
           });
     });
   }
@@ -140,13 +149,18 @@ class UserController {
                   'Error: Error while sending request to TheMovieDB.',
               ));
             }
-            return resolve(response.body.results);
+            const popularMovies = response.body.results;
+            for (let i = 0; i < popularMovies.length; i++) {
+              const favorite = popularMovies[i];
+              const randomBetween0And99 = Math.floor(Math.random() * 100);
+              favorite.suggestionScore = randomBetween0And99;
+            }
+            popularMovies.sort(
+                (movieA, movieB) => (movieA.suggestionScore < movieB.suggestionScore) ? 1 : -1,
+            );
+            return resolve(popularMovies);
           });
     });
-  }
-
-  getRandomBetween0And99() {
-    return Math.floor(Math.random() * 100);
   }
 
   tokenBelongsToUser(userEmail, token) {

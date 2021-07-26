@@ -360,7 +360,7 @@ describe('Get movies tests', () =>{
     const validToken = userController.sessionArray[0].token;
     return favorites = userController.getMovies(validToken, 'super').then((data) => {
       expect(data).toBe(keywordMoviesMock);
-      expect(checkOrderedBySuggestionForToday(keywordMoviesMock)).toBeTruthy();
+      expect(checkOrderedBySuggestion(keywordMoviesMock)).toBeTruthy();
     });
   });
 
@@ -375,7 +375,7 @@ describe('Get movies tests', () =>{
     const validToken = userController.sessionArray[0].token;
     return favorites = userController.getMovies(validToken, '').then((data) => {
       expect(data).toBe(popularMoviesMock);
-      expect(checkOrderedBySuggestionForToday(keywordMoviesMock)).toBeTruthy();
+      expect(checkOrderedBySuggestion(keywordMoviesMock)).toBeTruthy();
     });
   });
 
