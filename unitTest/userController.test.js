@@ -5,6 +5,7 @@ const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError
 const {InvalidEmailError} = require('../utils/customExceptions/invalidEmailError.js');
 const {InvalidPasswordError} = require('../utils/customExceptions/invalidPasswordError.js');
 const {TestData} = require('./utils/testData.js');
+const bcrypt = require('bcrypt');
 const unirest = require('unirest');
 jest.mock('unirest');
 const pathToUsersFile = './unitTest/usersTest.txt';
@@ -132,7 +133,7 @@ describe('Login/Logout tests', () =>{
 });
 
 describe('Register tests', () =>{
-  let spy;
+  let registerSpy;
 
   beforeAll(() => {
     const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
@@ -144,34 +145,48 @@ describe('Register tests', () =>{
 
   beforeEach(() => {
     userController = new UserController();
-    spy = jest.spyOn(userController.userDataAccess, 'register');
+    registerSpy = jest.spyOn(userController.userDataAccess, 'register');
   });
 
   afterEach(() => {
-    spy.mockRestore();
+    registerSpy.mockRestore();
   });
 
-  test('Register unregistered user', () => {
+  test('Register unregistered user', async () => {
+    const plainTextPassword = 'My1password231';
     const newUser = {
       email: 'alfp@yahoo.com',
       firstName: 'Alfredo',
       lastName: 'Perez',
-      password: 'My1password231',
+      password: plainTextPassword,
     };
-    spy.mockReturnValue(true);
-    expect(userController.register(newUser)).toBeTruthy();
+    registerSpy.mockReturnValue(true);
+    const registerResult = await userController.register(newUser);
+    expect(registerResult).toBeTruthy();
+    checkHashPassword(plainTextPassword, newUser);
   });
 
-  test('Register registered user', () => {
+  test('Register already registered user', async () => {
+    const plainTextPassword = '424pass2343421';
     const newUser = {
       email: 'pepep@gmail.com',
       firstName: 'Pepe',
       lastName: 'Gonzales',
       password: '424pass2343421',
     };
-    spy.mockReturnValue(false);
-    expect(userController.register(newUser)).toBeFalsy();
+    registerSpy.mockReturnValue(false);
+    const registerResult = await userController.register(newUser);
+    expect(registerResult).toBeFalsy();
+    checkHashPassword(plainTextPassword, newUser);
   });
+
+  async function checkHashPassword(plainTextPassword, newUser) {
+    const userParameters = registerSpy.mock.calls[0][0];
+    const hashedPassword = userParameters.password;
+    const isHashed = await bcrypt.compare(plainTextPassword, hashedPassword);
+    expect(isHashed).toBeTruthy();
+    expect(userParameters).toStrictEqual(newUser);
+  }
 });
 
 describe('Add favorite tests', () =>{

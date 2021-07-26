@@ -6,9 +6,9 @@ class MovieDataAccess {
     this.apiKey = apiKey;
   }
 
-  makeKeywordRequest(apiKey, keyword) {
+  makeKeywordRequest(keyword) {
     return new Promise((resolve, reject) => {
-      unirest.get('https://api.themoviedb.org/3/search/movie?api_key='+apiKey+
+      unirest.get('https://api.themoviedb.org/3/search/movie?api_key='+this.apiKey+
                 '&language=en-US&query='+keyword+'&page=1&include_adult=false')
           .then(function(response) {
             if (response.error) {
@@ -22,10 +22,10 @@ class MovieDataAccess {
     });
   }
 
-  makePopularRequest(apiKey) {
+  makePopularRequest() {
     return new Promise((resolve, reject) => {
       unirest.get('https://api.themoviedb.org/3/movie/popular?'+
-              'api_key='+apiKey+'&language=en-US&page=1')
+              'api_key='+this.apiKey+'&language=en-US&page=1')
           .then(function(response) {
             if (response.error) {
               return reject(new HTTPRequestError(

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/agustinferrari/MovieAPI#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.17.1",
     "unirest": "^0.6.0"
   },

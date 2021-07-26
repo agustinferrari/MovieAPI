@@ -4,11 +4,13 @@ const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError.j
 const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError.js');
 const {InvalidEmailError} = require('../utils/customExceptions/invalidEmailError.js');
 const {InvalidPasswordError} = require('../utils/customExceptions/invalidPasswordError.js');
+const bcrypt = require('bcrypt');
 const unirest = require('unirest');
 
 
 class UserController {
   constructor() {
+    this.bcryptSaltRounds = 10;
     this.sessionArray = [];
     this.userDataAccess = new UserDataAccess('./users.txt', './favorites.txt');
     this.movieDataAccess = new MovieDataAccess('');
@@ -65,7 +67,11 @@ class UserController {
     }
   }
 
-  register(user) {
+  async register(user) {
+    const userPassword = user.password;
+    await bcrypt.hash(userPassword, this.bcryptSaltRounds).then(function(hash) {
+      user.password = hash;
+    });
     return this.userDataAccess.register(user);
   }
 
@@ -106,9 +112,8 @@ class UserController {
 
   async getMovies(token, keyword) {
     if (this.isTokenValid(token)) {
-      const apiKey = '';
       if (keyword) {
-        return this.movieDataAccess.makeKeywordRequest(apiKey, keyword).then(
+        return this.movieDataAccess.makeKeywordRequest(keyword).then(
             function(moviesByKeyword) {
               for (let i = 0; i < moviesByKeyword.length; i++) {
                 const favorite = moviesByKeyword[i];
@@ -124,7 +129,7 @@ class UserController {
               throw error;
             });
       } else {
-        return this.movieDataAccess.makePopularRequest(apiKey).then(
+        return this.movieDataAccess.makePopularRequest().then(
             function(popularMovies) {
               for (let i = 0; i < popularMovies.length; i++) {
                 const favorite = popularMovies[i];
