@@ -264,7 +264,7 @@ describe('Get user favorite tests', () =>{
     spy.mockReturnValue(favoritesMock);
     const favorites = userController.getFavorites(userEmail, token);
     expect(favorites).toHaveLength(6);
-    expect(checkOrderedBySuggestion(favorites)).toBeTruthy();
+    expect(checkOrderedBySuggestionForToday(favorites)).toBeTruthy();
   });
 
   test('Get favorites from user with wrong token', () => {
@@ -293,7 +293,7 @@ describe('Get user favorite tests', () =>{
     expect(favorites).toHaveLength(0);
   });
 
-  function checkOrderedBySuggestion(favoriteArray) {
+  function checkOrderedBySuggestionForToday(favoriteArray) {
     let isOrderedBySuggestion = true;
     let lastSuggestion = 100;
     for (let i = 0; i < favoriteArray.length && isOrderedBySuggestion; i++) {
@@ -360,6 +360,7 @@ describe('Get movies tests', () =>{
     const validToken = userController.sessionArray[0].token;
     return favorites = userController.getMovies(validToken, 'super').then((data) => {
       expect(data).toBe(keywordMoviesMock);
+      expect(checkOrderedBySuggestionForToday(keywordMoviesMock)).toBeTruthy();
     });
   });
 
@@ -374,6 +375,7 @@ describe('Get movies tests', () =>{
     const validToken = userController.sessionArray[0].token;
     return favorites = userController.getMovies(validToken, '').then((data) => {
       expect(data).toBe(popularMoviesMock);
+      expect(checkOrderedBySuggestionForToday(keywordMoviesMock)).toBeTruthy();
     });
   });
 
@@ -390,4 +392,17 @@ describe('Get movies tests', () =>{
     await expect(userController.getMovies(invalidToken, 'Mega'))
         .rejects.toThrow(HTTPRequestError);
   });
+
+  function checkOrderedBySuggestion(favoriteArray) {
+    let isOrderedBySuggestion = true;
+    let lastSuggestion = 100;
+    for (let i = 0; i < favoriteArray.length && isOrderedBySuggestion; i++) {
+      const favoriteIterator = favoriteArray[i];
+      if (favoriteIterator.suggestionScore > lastSuggestion) {
+        isOrderedBySuggestion = false;
+      }
+      lastSuggestion= favoriteIterator.suggestionScore;
+    }
+    return isOrderedBySuggestion;
+  }
 });
