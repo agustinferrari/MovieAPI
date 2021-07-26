@@ -6,6 +6,7 @@ const {InvalidEmailError} = require('../utils/customExceptions/invalidEmailError
 const {InvalidPasswordError} = require('../utils/customExceptions/invalidPasswordError.js');
 const {TestData} = require('./utils/testData.js');
 const bcrypt = require('bcrypt');
+jest.mock('bcrypt');
 const unirest = require('unirest');
 jest.mock('unirest');
 const pathToUsersFile = './unitTest/usersTest.txt';
@@ -52,79 +53,79 @@ function countSessionTest(email, expectedCount) {
 }
 
 describe('Login/Logout tests', () =>{
-  let loginSpy;
   let existsSpy;
+  let getHashedPasswordMock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     userController = new UserController();
-    loginSpy = jest.spyOn(userController.userDataAccess, 'login');
+    bcrypt.compare.mockReturnValue(true);
     existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
     existsSpy.mockReturnValue(true);
-    loginSpy.mockReturnValue(true);
-    userController.login('pepep@gmail.com', '424pass2343421');
+    await userController.login('pepep@gmail.com', '424pass2343421');
+    getHashedPasswordMock = jest.spyOn(userController.userDataAccess, 'getHashedPassword');
+    getHashedPasswordMock.mockReturnValue('424pass2343421');
   });
 
   afterEach(() => {
-    loginSpy.mockRestore();
+    bcrypt.compare.mockRestore();
     existsSpy.mockRestore();
   });
 
-  test('Login registered user', () =>{
+  test('Login registered user', async () =>{
     const user = {
       email: 'juanasanchez@gmail.com',
       password: 'password12345',
     };
     existsSpy.mockReturnValue(true);
-    const newToken = userController.login(user.email, user.password);
+    bcrypt.compare.mockReturnValue(true);
+    const newToken = await userController.login(user.email, user.password);
     checkTokenValidity(newToken);
     countSessionTest(user.email, 1);
   });
 
-  test('Login already logged in user', () =>{
+  test('Login already logged in user', async () =>{
     const user = {
       email: 'pepep@gmail.com',
       password: '424pass2343421',
     };
     existsSpy.mockReturnValue(true);
-    const newToken = userController.login(user.email, user.password);
+    bcrypt.compare.mockReturnValue(true);
+    const newToken = await userController.login(user.email, user.password);
     checkTokenValidity(newToken);
     countSessionTest(user.email, 1);
   });
 
-  test('Login unregistered user', () =>{
+  test('Login unregistered user', async () =>{
     const user = {
       email: 'mariogaspar@gmail.com',
       password: '343423cxtrp213',
     };
     existsSpy.mockReturnValue(false);
-    loginSpy.mockReturnValue(false);
-    expect(() => {
-      userController.login(user.email, user.password);
-    }).toThrow(InvalidEmailError);
+    await expect(userController.login(user.email, user.password)).
+        rejects.toThrow(InvalidEmailError);
     countSessionTest(user.email, 0);
   });
 
-  test('Login registered user with wrong password', () =>{
+  test('Login registered user with wrong password', async () =>{
     const user = {
       email: 'pepep@gmail.com',
       password: 'wrongpassword123',
     };
     existsSpy.mockReturnValue(true);
-    loginSpy.mockReturnValue(false);
-    expect(() => {
-      userController.login(user.email, user.password);
-    }).toThrow(InvalidPasswordError);
+    bcrypt.compare.mockReturnValue(false);
+    await expect(userController.login(user.email, user.password)).
+        rejects.toThrow(InvalidPasswordError);
     countSessionTest(user.email, 1);
   });
 
-  test('Logout token in session', () =>{
+  test('Logout token in session', async () =>{
     const token = userController.sessionArray[0].token;
     const email = userController.sessionArray[0].userId;
     userController.logout(token);
     countSessionTest(email, 0);
   });
 
-  test('Logout token without session', () =>{
+  test('Logout token without session', async () =>{
     const token = userController.sessionArray[0].token + 1;
     const sessionCountBeforeLogout = userController.sessionArray.length;
     userController.logout(token);
@@ -135,12 +136,15 @@ describe('Login/Logout tests', () =>{
 describe('Register tests', () =>{
   let registerSpy;
 
-  beforeAll(() => {
-    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
-    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+  beforeAll(async () => {
+    bcrypt.compare.mockReturnValue(true);
+    bcrypt.hash.mockImplementation(() => {
+      return new Promise((resolve) => {
+        return resolve('strsatastd39473-2054');
+      });
+    });
+    existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
     existsSpy.mockReturnValue(true);
-    loginSpy.mockReturnValue(true);
-    userController.login('pepep@gmail.com', '424pass2343421');
   });
 
   beforeEach(() => {
@@ -197,14 +201,13 @@ describe('Add favorite tests', () =>{
     testData = new TestData();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     userController = new UserController();
-    spy = jest.spyOn(userController.userDataAccess, 'addFavorite');
-    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
-    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    bcrypt.compare.mockReturnValue(true);
+    existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
     existsSpy.mockReturnValue(true);
-    loginSpy.mockReturnValue(true);
-    userController.login('pepep@gmail.com', '424pass2343421');
+    await userController.login('pepep@gmail.com', '424pass2343421');
+    spy = jest.spyOn(userController.userDataAccess, 'addFavorite');
   });
 
   afterEach(() => {
@@ -259,13 +262,12 @@ describe('Get user favorite tests', () =>{
     testData.movie4 +','+ testData.movie5 +','+ testData.movie6+']');
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     userController = new UserController();
-    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
-    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    bcrypt.compare.mockReturnValue(true);
+    existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
     existsSpy.mockReturnValue(true);
-    loginSpy.mockReturnValue(true);
-    userController.login('pepep@gmail.com', '424pass2343421');
+    await userController.login('pepep@gmail.com', '424pass2343421');
     spy = jest.spyOn(userController.userDataAccess, 'getFavorites');
   });
 
@@ -359,13 +361,12 @@ describe('Get movies tests', () =>{
     };
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     userController = new UserController();
-    const loginSpy = jest.spyOn(userController.userDataAccess, 'login');
-    const existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
+    bcrypt.compare.mockReturnValue(true);
+    existsSpy = jest.spyOn(userController.userDataAccess, 'exists');
     existsSpy.mockReturnValue(true);
-    loginSpy.mockReturnValue(true);
-    userController.login('pepep@gmail.com', '424pass2343421');
+    await userController.login('pepep@gmail.com', '424pass2343421');
   });
 
   afterEach(()=>{

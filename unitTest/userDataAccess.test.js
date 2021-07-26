@@ -19,24 +19,34 @@ afterEach(() => {
   testData.testFilesEmtpy();
 });
 
-test('User already registered login', () =>{
-  expect(userDataAccess.login('juanasanchez@gmail.com', 'password12345')).toBeTruthy();
+test('User already registered getHashedPassword', () =>{
+  const hashedPassword = userDataAccess.getHashedPassword('juanasanchez@gmail.com');
+  const expectedHashedPassword = 'password12345';
+  expect(hashedPassword).toBe(expectedHashedPassword);
 });
 
-test('User already registered login with different capitalization', () =>{
-  expect(userDataAccess.login('JUANASANCHEZ@GMAIL.COM', 'password12345')).toBeTruthy();
+test('User already registered getHashedPassword with different capitalization', () =>{
+  const hashedPassword = userDataAccess.getHashedPassword('JUANASANCHEZ@GMAIL.COM');
+  const expectedHashedPassword = 'password12345';
+  expect(hashedPassword).toBe(expectedHashedPassword);
 });
 
-test('User not registered login', () =>{
-  expect(userDataAccess.login('jaime@gmail.com', 'superSecurePass')).toBeFalsy();
+test('User not registered getHashedPassword', () =>{
+  const hashedPassword = userDataAccess.getHashedPassword('jaime@gmail.com');
+  const expectedHashedPassword = 'superSecurePass';
+  expect(hashedPassword).not.toBe(expectedHashedPassword);
 });
 
-test('Empty email login', () =>{
-  expect(userDataAccess.login('', 'password12345')).toBeFalsy();
+test('Empty email getHashedPassword', () =>{
+  const hashedPassword = userDataAccess.getHashedPassword('');
+  const expectedHashedPassword = 'password12345';
+  expect(hashedPassword).not.toBe(expectedHashedPassword);
 });
 
-test('Empty password login', () =>{
-  expect(userDataAccess.login('juanasanchez@gmail.com', '')).toBeFalsy();
+test('Empty password getHashedPassword', () =>{
+  const hashedPassword = userDataAccess.getHashedPassword('juanasanchez@gmail.com');
+  const expectedHashedPassword = '';
+  expect(hashedPassword).not.toBe(expectedHashedPassword);
 });
 
 test('Check existence of unexistent user', () =>{

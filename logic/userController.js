@@ -48,10 +48,12 @@ class UserController {
     return newToken;
   }
 
-  login(userEmail, userPassword) {
+  async login(userEmail, userPassword) {
     if (this.userDataAccess.exists(userEmail)) {
-      if (this.userDataAccess.login(userEmail, userPassword)) {
-        return this.addSession(userEmail); ;
+      const hashedPassword = this.userDataAccess.getHashedPassword(userEmail);
+      const passwordMatches = await bcrypt.compare(userPassword, hashedPassword);
+      if (passwordMatches) {
+        return this.addSession(userEmail);
       }
       throw new InvalidPasswordError('Error: the password received is incorrect.');
     }

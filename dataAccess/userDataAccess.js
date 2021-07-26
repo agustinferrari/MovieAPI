@@ -17,16 +17,15 @@ class UserDataAccess {
     this.favorites = JSON.parse(favoriteData);
   }
 
-  login(emailToCheck, passwordToCheck) {
+  getHashedPassword(emailToCheck) {
     this.readUserData();
     for (let i = 0; i < this.users.length; i++) {
       const userIterator = this.users[i];
-      if (userIterator.email === emailToCheck.toLowerCase() &&
-            userIterator.password === passwordToCheck) {
-        return true;
+      if (userIterator.email === emailToCheck.toLowerCase()) {
+        return userIterator.password;
       }
     }
-    return false;
+    return undefined;
   }
 
   exists(emailToCheck) {
