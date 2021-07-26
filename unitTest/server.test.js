@@ -117,7 +117,7 @@ describe('Register user tests', () =>{
     checkResponseBodyStatus(response, {}, 200);
   });
 
-  test('Register registered user', async () => {
+  test('Register already registered user', async () => {
     registerUserMock.mockImplementation(() => {
       return false;
     });
@@ -127,7 +127,12 @@ describe('Register user tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkMockFirstThreeCalls(registerUserMock, newUser);
-    checkResponseBodyStatus(response, {}, 400);
+    checkResponseBodyStatus(
+        response,
+        'Error: there\'s already an'+
+        ' existent account using the email entered.',
+        400,
+    );
   });
 
   test('Register invalid user', async () => {
@@ -136,7 +141,11 @@ describe('Register user tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkNoMockCallsWereMade(registerUserMock);
-    checkResponseBodyStatus(response, {}, 400);
+    checkResponseBodyStatus(
+        response,
+        {},
+        400,
+    );
   });
 
   test('Register invalid user', async () => {
@@ -145,7 +154,12 @@ describe('Register user tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkNoMockCallsWereMade(registerUserMock);
-    checkResponseBodyStatus(response, {}, 400);
+    checkResponseBodyStatus(
+        response,
+        'Error: the specified user is invalid,'+
+        ' it should be a valid JSON object with the expected properties'+
+        ' (email, firstName, lastName, password).',
+        400);
   });
 });
 

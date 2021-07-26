@@ -36,10 +36,17 @@ app.get('/getMovies', async (req, res) => {
 
 app.post('/registerUser', async (req, res) => {
   const user = req.body;
-  if (validator.isValidUser(user) && await userController.register(user)) {
-    res.sendStatus(200);
+  if (validator.isValidUser(user)) {
+    if (await userController.register(user)) {
+      res.sendStatus(200);
+    } else {
+      res.status(400).json('Error: there\'s already an'+
+      ' existent account using the email entered.');
+    }
   } else {
-    res.sendStatus(400);
+    res.status(400).json('Error: the specified user is invalid,'+
+    ' it should be a valid JSON object with the expected properties'+
+    ' (email, firstName, lastName, password).'); ;
   }
 });
 

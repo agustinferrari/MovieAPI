@@ -337,10 +337,10 @@ describe('Get movies tests', () =>{
     testData = new TestData();
     keywordMoviesMock =
      JSON.parse('['+ testData.movie1 +','+ testData.movie2 +','+ testData.movie3 + ',' +
-      testData.movie1WithoutAddedAt +']');
+      testData.movie1WithoutAddedAt +','+ testData.movie5 +','+ testData.movie6 +']');
     popularMoviesMock=
      JSON.parse('['+testData.movie4 +','+ testData.movie5 +','+ testData.movie6 + ',' +
-     testData.movie2WithoutAddedAt +']');
+     testData.movie2WithoutAddedAt +','+ testData.movie2 +','+ testData.movie3 +']');
     correctResponseKeyword = {
       status: 200,
       body:
