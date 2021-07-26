@@ -20,8 +20,15 @@ class UserDataAccess {
 
   readUserFavoriteData() {
     this.readUserData();
-    const favoriteData = fs.readFileSync(this.pathToFavoriteData);
-    this.favorites = JSON.parse(favoriteData);
+    try {
+      const favoriteData = fs.readFileSync(this.pathToFavoriteData);
+      this.favorites = JSON.parse(favoriteData);
+      if (!Array.isArray(this.favorites)) {
+        this.favorites = [];
+      }
+    } catch (error) {
+      this.favorites = [];
+    }
   }
 
   getHashedPassword(emailToCheck) {
