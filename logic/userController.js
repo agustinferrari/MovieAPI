@@ -7,7 +7,6 @@ const {InvalidPasswordError} = require('../utils/customExceptions/invalidPasswor
 const bcrypt = require('bcrypt');
 const unirest = require('unirest');
 
-
 class UserController {
   constructor() {
     this.bcryptSaltRounds = 10;

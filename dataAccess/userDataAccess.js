@@ -7,8 +7,15 @@ class UserDataAccess {
   }
 
   readUserData() {
-    const userData = fs.readFileSync(this.pathToUserData);
-    this.users = JSON.parse(userData);
+    try {
+      const userData = fs.readFileSync(this.pathToUserData);
+      this.users = JSON.parse(userData);
+      if (!Array.isArray(this.users)) {
+        this.users = [];
+      }
+    } catch (error) {
+      this.users = [];
+    }
   }
 
   readUserFavoriteData() {

@@ -156,6 +156,34 @@ test('Get favorites from unregistered user ', () =>{
   getFavoritesTest('mario@gmail.com', '[]');
 });
 
+test('Read user data with correct data in textfile', () =>{
+  userDataAccess.readUserData();
+  const actualUserData = fs.readFileSync(pathToUsersFile);
+  const userData = userDataAccess.users;
+  expect(userData).toStrictEqual(JSON.parse(actualUserData));
+});
+
+test('Read user from empty textfile', () =>{
+  testData.testFilesEmtpy();
+  userDataAccess.readUserData();
+  const userData = userDataAccess.users;
+  expect(userData).toStrictEqual(JSON.parse('[]'));
+});
+
+test('Read user from incorrect json textfile', () =>{
+  testData.testFilesIncorrectJSON();
+  userDataAccess.readUserData();
+  const userData = userDataAccess.users;
+  expect(userData).toStrictEqual(JSON.parse('[]'));
+});
+
+test('Read user from textfile not with json object instead of array of objects', () =>{
+  testData.testFilesIncorrectNotArray();
+  userDataAccess.readUserData();
+  const userData = userDataAccess.users;
+  expect(userData).toStrictEqual(JSON.parse('[]'));
+});
+
 function getFavoritesTest(userEmail, expectedData) {
   const favorites = userDataAccess.getFavorites(userEmail);
   const expectedFavorites = JSON.parse(expectedData);

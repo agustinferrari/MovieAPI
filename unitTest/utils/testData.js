@@ -67,6 +67,16 @@ class TestData {
     fs.writeFileSync(pathToUsersFile, '');
     fs.writeFileSync(pathToFavoritesFile, '');
   }
+
+  testFilesIncorrectJSON() {
+    fs.writeFileSync(pathToUsersFile, this.invalidJSONUser);
+    fs.writeFileSync(pathToFavoritesFile, this.invalidJSONUser);
+  }
+
+  testFilesIncorrectNotArray() {
+    fs.writeFileSync(pathToUsersFile, this.userPepeJSON);
+    fs.writeFileSync(pathToFavoritesFile, this.userPepeJSON);
+  }
 }
 
 module.exports = {TestData: TestData};

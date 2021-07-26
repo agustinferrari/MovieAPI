@@ -36,7 +36,7 @@ app.get('/getMovies', async (req, res) => {
 
 app.post('/registerUser', async (req, res) => {
   const user = req.body;
-  if (validator.isValidUser(user) && userController.register(user)) {
+  if (validator.isValidUser(user) && await userController.register(user)) {
     res.sendStatus(200);
   } else {
     res.sendStatus(400);
