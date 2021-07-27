@@ -77,7 +77,7 @@ app.post('/login', async (req, res) => {
   } else {
     res.status(400).send('Error: the specified login entry is invalid,'+
     ' it should be a valid JSON object with the expected properties'+
-    ' (email, password).'); ;
+    ' (email, password).');
   }
 });
 
@@ -100,7 +100,7 @@ app.post('/addFavorites', async (req, res) => {
         if (userController.addFavorites(addFavoritesEntry.email, addFavoritesEntry.movies, token)) {
           res.sendStatus(200);
         } else {
-          res.status(401).send('Error: the email entered does not match the token received');
+          res.status(401).send('Error: the email entered does not match any user in the database.');
         }
       } catch (error) {
         if (error instanceof InvalidTokenError) {
@@ -110,7 +110,9 @@ app.post('/addFavorites', async (req, res) => {
         }
       }
     } else {
-      res.sendStatus(400);
+      res.status(400).send('Error: the specified add favorite entry is invalid,'+
+      ' it should be a valid JSON object with the expected properties'+
+      ' (email, movies).');
     }
   } else {
     res.status(401).send('Error: the specified token format is invalid.');

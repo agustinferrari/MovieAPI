@@ -329,7 +329,7 @@ describe('Add favorites tests', () =>{
     );
     checkResponseTextStatus(
         response,
-        'Error: the email entered does not match the token received',
+        'Error: the email entered does not match any user in the database.',
         401,
     );
   });
@@ -394,7 +394,12 @@ describe('Add favorites tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkNoMockCallsWereMade(addFavoritesMock);
-    checkResponseBodyStatus(response, {}, 400);
+    checkResponseTextStatus(
+        response,
+        'Error: the specified add favorite entry is invalid,'+
+        ' it should be a valid JSON object with the expected properties'+
+        ' (email, movies).',
+        400);
   });
 
   test('Add favorites with invalid token', async () => {
