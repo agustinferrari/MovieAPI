@@ -60,7 +60,9 @@ describe('Get movies tests', () =>{
 
   test('Get movies from non-authenticated user without keyword', async () => {
     getMoviesMock.mockImplementation(() => {
-      throw new InvalidTokenError('Error: the received token is not registered.');
+      return new Promise((resolve, reject) => {
+        return reject(new InvalidTokenError('Error: the received token is not registered.'));
+      });
     });
     const response = await request.get('/getMovies').query({
       token: 'It8GNmSOj8g137BSRbEa',
@@ -70,7 +72,9 @@ describe('Get movies tests', () =>{
 
   test('Get movies without token', async () => {
     getMoviesMock.mockImplementation(() => {
-      throw new InvalidTokenError('Error: the received token is not registered.');
+      return new Promise((resolve, reject) => {
+        return reject(new InvalidTokenError('Error: the received token is not registered.'));
+      });
     });
     const response = await request.get('/getMovies');
     checkResponseTextStatus(response, 'Error: the specified token is invalid.', 401);
@@ -78,7 +82,9 @@ describe('Get movies tests', () =>{
 
   test('Get movies unexpected error', async () => {
     getMoviesMock.mockImplementation(() => {
-      throw new UnexpectedError('Error description');
+      return new Promise((resolve, reject) => {
+        return reject(new UnexpectedError('Error description'));
+      });
     });
     const response = await request.get('/getMovies').query({
       token: 'EY3Z762DpcUR9eiGe6RR',
@@ -88,7 +94,11 @@ describe('Get movies tests', () =>{
 
   test('Get movies HTTPRequestError', async () => {
     getMoviesMock.mockImplementation(() => {
-      throw new HTTPRequestError('Error: Error while sending request to TheMovieDB.');
+      return new Promise((resolve, reject) => {
+        return reject(new HTTPRequestError(
+            'Error: Error while sending request to TheMovieDB.',
+        ));
+      });
     });
     const response = await request.get('/getMovies').query({
       token: 'EY3Z762DpcUR9eiGe6RR',

@@ -27,11 +27,9 @@ app.get('/getMovies', async (req, res) => {
   const token = req.query.token;
   const keyword = req.query.keyword;
   if (validator.isValidToken(token)) {
-    try {
-      userController.getMovies(token, keyword).then((result) => {
-        res.json(result);
-      });
-    } catch (error) {
+    userController.getMovies(token, keyword).then((result) => {
+      res.json(result);
+    }).catch((error) => {
       if (error instanceof InvalidTokenError) {
         res.status(401).send(error.message);
       } else if (error instanceof HTTPRequestError) {
@@ -39,7 +37,7 @@ app.get('/getMovies', async (req, res) => {
       } else {
         res.status(500).send('Error: Unexpected Error');
       }
-    }
+    });
   } else {
     res.status(401).send('Error: the specified token is invalid.');
   }
