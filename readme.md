@@ -1,11 +1,9 @@
 
 # MovieAPI
 
-#### Brief description of the endpoints the API provides:
-
 ## Indices
 
-* [Ungrouped](#ungrouped)
+* [API Reference / Endpoints](#api-reference/endpoints)
 
   * [Add favorites](#1-add-favorites)
   * [Get favorite movies](#2-get-favorite-movies)
@@ -20,7 +18,7 @@
 
 ## API Reference / Endpoints
 
-
+#### Brief description of the endpoints the API provides:
 
 ### 1. Add favorites
 
