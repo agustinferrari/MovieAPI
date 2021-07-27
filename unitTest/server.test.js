@@ -213,7 +213,7 @@ describe('Login tests', () =>{
     checkResponseTextStatus(response, 'Error: the password received is incorrect.', 409);
   });
 
-  test('Login with registered user but incorrect password', async () => {
+  test('Login unexpected error', async () => {
     loginMock.mockImplementation(() => {
       throw new UnexpectedError('Error description');
     });
@@ -226,13 +226,19 @@ describe('Login tests', () =>{
     checkResponseTextStatus(response, 'Error: Unexpected Error', 500);
   });
 
-  test('Login with registered user but incorrect password', async () => {
+  test('Login with invalid login entry', async () => {
     const response = await request.post('/login')
         .send(testData.invalidLoginJSON)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkNoMockCallsWereMade(loginMock);
-    checkResponseBodyStatus(response, {}, 400);
+    checkResponseTextStatus(
+        response,
+        'Error: the specified login entry is invalid,'+
+        ' it should be a valid JSON object with the expected properties'+
+        ' (email, password).',
+        400,
+    );
   });
 });
 

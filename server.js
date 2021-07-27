@@ -65,7 +65,7 @@ app.post('/login', async (req, res) => {
   const loginEntry = req.body;
   if (validator.isValidLogin(loginEntry)) {
     try {
-      const token = userController.login(loginEntry.email, loginEntry.password);
+      const token = await userController.login(loginEntry.email, loginEntry.password);
       res.status(200).send(token);
     } catch (error) {
       if (error instanceof InvalidEmailError) {
@@ -77,7 +77,9 @@ app.post('/login', async (req, res) => {
       }
     }
   } else {
-    res.sendStatus(400);
+    res.status(400).send('Error: the specified login entry is invalid,'+
+    ' it should be a valid JSON object with the expected properties'+
+    ' (email, password).'); ;
   }
 });
 
