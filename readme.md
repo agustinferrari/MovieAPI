@@ -1,5 +1,5 @@
 
-# API Reference / Endpoints
+# MovieAPI
 
 #### Brief description of the endpoints the API provides:
 
@@ -18,7 +18,7 @@
 --------
 
 
-## Ungrouped
+## API Reference / Endpoints
 
 
 
