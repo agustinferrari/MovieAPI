@@ -77,7 +77,7 @@ describe('Get movies tests', () =>{
       });
     });
     const response = await request.get('/getMovies');
-    checkResponseTextStatus(response, 'Error: the specified token is invalid.', 401);
+    checkResponseTextStatus(response, 'Error: the specified token format is invalid.', 401);
   });
 
   test('Get movies unexpected error', async () => {
@@ -278,7 +278,7 @@ describe('Logout tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkNoMockCallsWereMade(logoutMock);
-    checkResponseTextStatus(response, 'Error: the specified token is invalid.', 401);
+    checkResponseTextStatus(response, 'Error: the specified token format is invalid.', 401);
   });
 });
 
@@ -406,7 +406,7 @@ describe('Add favorites tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkNoMockCallsWereMade(addFavoritesMock);
-    checkResponseTextStatus(response, 'Error: the specified token is invalid.', 401);
+    checkResponseTextStatus(response, 'Error: the specified token format is invalid.', 401);
   });
 });
 
@@ -477,7 +477,7 @@ describe('Get favorites tests', () =>{
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json');
     checkNoMockCallsWereMade(getFavoritesMock);
-    checkResponseTextStatus(response, 'Error: the specified token is invalid.', 401);
+    checkResponseTextStatus(response, 'Error: the specified token format is invalid.', 401);
   });
 });
 

@@ -39,7 +39,7 @@ app.get('/getMovies', async (req, res) => {
       }
     });
   } else {
-    res.status(401).send('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token format is invalid.');
   }
 });
 
@@ -87,7 +87,7 @@ app.post('/logout', async (req, res) => {
     userController.logout(token);
     res.sendStatus(200);
   } else {
-    res.status(401).send('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token format is invalid.');
   }
 });
 
@@ -113,7 +113,7 @@ app.post('/addFavorites', async (req, res) => {
       res.sendStatus(400);
     }
   } else {
-    res.status(401).send('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token format is invalid.');
   }
 });
 
@@ -132,7 +132,7 @@ app.get('/getFavorites', async (req, res) => {
       }
     }
   } else {
-    res.status(401).send('Error: the specified token is invalid.');
+    res.status(401).send('Error: the specified token format is invalid.');
   }
 });
 
