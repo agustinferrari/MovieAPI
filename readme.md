@@ -1,9 +1,9 @@
 
 # MovieAPI
 
-## Indices
+## Indexes
 
-* [API Reference / Endpoints](#api-reference/endpoints)
+* [API Reference / Endpoints](#api-reference--endpoints)
 
   * [Add favorites](#1-add-favorites)
   * [Get favorite movies](#2-get-favorite-movies)
