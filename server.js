@@ -49,7 +49,7 @@ app.post('/registerUser', async (req, res) => {
     if (await userController.register(user)) {
       res.sendStatus(200);
     } else {
-      res.status(400).send('Error: there\'s already an'+
+      res.status(409).send('Error: there\'s already an'+
       ' existent account using the email entered.');
     }
   } else {

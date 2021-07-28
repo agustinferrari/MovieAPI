@@ -141,7 +141,7 @@ describe('Register user tests', () =>{
         response,
         'Error: there\'s already an'+
         ' existent account using the email entered.',
-        400,
+        409,
     );
   });
 
