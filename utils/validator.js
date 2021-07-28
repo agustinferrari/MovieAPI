@@ -2,7 +2,7 @@ class Validator {
   isValidUser(parsedObject) {
     const hasProperties = 'email' in parsedObject && 'firstName' in parsedObject &&
         'lastName' in parsedObject && 'password' in parsedObject;
-    const hasValidProperties = hasProperties && this.validateEmail(parsedObject.email) &&
+    const hasValidProperties = hasProperties && this.isValidEmail(parsedObject.email) &&
         parsedObject.firstName && parsedObject.lastName &&parsedObject.password;
     return hasValidProperties;
   }
@@ -28,7 +28,7 @@ class Validator {
     return regexAlphanumeric20Chars.test(token);
   }
 
-  validateEmail(email) {
+  isValidEmail(email) {
     const emailRegex = /\S+@\S+\.\S+/;
     return emailRegex.test(email);
   }

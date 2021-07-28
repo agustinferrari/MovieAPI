@@ -1,1 +1,1 @@
-[{"email":"juanasanchez@gmail.com","firstName":"Juana","lastName":"Sanchez","password":"$2b$10$Vmu.IysPwef4yknohl78UOjdf4YidPr4dgc4oQcgLH4PxsymIWOkS"}]
+[{"email":"juanasanchez@gmail.com","firstName":"Juana","lastName":"Sanchez","password":"$2b$10$Vmu.IysPwef4yknohl78UOjdf4YidPr4dgc4oQcgLH4PxsymIWOkS"},{"email":"pepe@gmail.com","firstName":"Pepe","lastName":"Sanchez","password":"$2b$10$6RbjqlAg2GXYaMqCNN4oq.xIk1TaEnGIRZsLvFbp7KQGGhx2uulKu"}]

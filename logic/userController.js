@@ -1,15 +1,13 @@
 const {UserDataAccess} = require('../dataAccess/userDataAccess.js');
 const {MovieDataAccess} = require('../dataAccess/movieDataAccess.js');
-const {HTTPRequestError} = require('../utils/customExceptions/httpRequestError.js');
 const {InvalidTokenError} = require('../utils/customExceptions/invalidTokenError.js');
 const {InvalidEmailError} = require('../utils/customExceptions/invalidEmailError.js');
 const {InvalidPasswordError} = require('../utils/customExceptions/invalidPasswordError.js');
 const bcrypt = require('bcrypt');
-const unirest = require('unirest');
 
 class UserController {
   constructor() {
-    this.bcryptSaltRounds = 10;
+    this.bcryptSaltRounds = 13;
     this.sessionArray = [];
     this.userDataAccess = new UserDataAccess('./users.txt', './favorites.txt');
     this.movieDataAccess = new MovieDataAccess('');
