@@ -1,20 +1,15 @@
 class Validator {
   isValidUser(parsedObject) {
     const requiredProperties = ['email', 'firstName', 'lastName', 'password'];
-    let hasRequiredStringProperties = true;
-    for (let i = 0; hasRequiredStringProperties && i<requiredProperties.length; i++) {
-      hasRequiredStringProperties = hasRequiredStringProperties &&
-      requiredProperties[i] in parsedObject &&
-      typeof parsedObject[requiredProperties[i]] == 'string' &&
-      parsedObject[requiredProperties[i]];
-    }
-    const hasValidProperties = hasRequiredStringProperties &&
-    this.isValidEmail(parsedObject.email);
-    return hasValidProperties;
+    return this.isValidStringPropertiesObject(parsedObject, requiredProperties);
   }
 
   isValidLogin(parsedObject) {
     const requiredProperties = ['email', 'password'];
+    return this.isValidStringPropertiesObject(parsedObject, requiredProperties);
+  }
+
+  isValidStringPropertiesObject(parsedObject, requiredProperties) {
     let hasRequiredStringProperties = true;
     for (let i = 0; hasRequiredStringProperties && i<requiredProperties.length; i++) {
       hasRequiredStringProperties = hasRequiredStringProperties &&
@@ -28,7 +23,8 @@ class Validator {
   }
 
   isValidAddFavorite(parsedObject) {
-    const hasMainProperties = 'email' in parsedObject && 'movies' in parsedObject;
+    const hasMainProperties = 'email' in parsedObject && 'movies' in parsedObject &&
+    typeof parsedObject['email'] == 'string' && parsedObject['email'];
     const movies = parsedObject.movies;
     let hasValidMoviesAndProperties = hasMainProperties && movies.length > 0;
     for (let i = 0; hasValidMoviesAndProperties && i<movies.length; i++) {
