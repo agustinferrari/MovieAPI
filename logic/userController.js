@@ -110,7 +110,7 @@ class UserController {
   }
 
   async getMovies(token, keyword) {
-    if (this.isTokenValid(token)) {
+    if (this.isTokenAuthenticated(token)) {
       if (keyword) {
         return this.movieDataAccess.makeKeywordRequest(keyword).then(
             function(moviesByKeyword) {
@@ -160,7 +160,7 @@ class UserController {
     return tokenBelongsToUser;
   }
 
-  isTokenValid(token) {
+  isTokenAuthenticated(token) {
     let tokenIsValid = false;
     for (let i = 0; i < this.sessionArray.length && !tokenIsValid; i++) {
       const sessionIterator = this.sessionArray[i];
