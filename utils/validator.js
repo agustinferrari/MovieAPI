@@ -14,7 +14,17 @@ class Validator {
   }
 
   isValidLogin(parsedObject) {
-    return 'email' in parsedObject && 'password' in parsedObject;
+    const requiredProperties = ['email', 'password'];
+    let hasRequiredStringProperties = true;
+    for (let i = 0; hasRequiredStringProperties && i<requiredProperties.length; i++) {
+      hasRequiredStringProperties = hasRequiredStringProperties &&
+      requiredProperties[i] in parsedObject &&
+      typeof parsedObject[requiredProperties[i]] == 'string' &&
+      parsedObject[requiredProperties[i]];
+    }
+    const hasValidProperties = hasRequiredStringProperties &&
+    this.isValidEmail(parsedObject.email);
+    return hasValidProperties;
   }
 
   isValidAddFavorite(parsedObject) {

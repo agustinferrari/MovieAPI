@@ -95,11 +95,24 @@ class ValidatorTestData {
     this.invalidLogin2 = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com"' +
     '}');
+    this.invalidLogin3 = JSON.parse('{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '"password": 23' +
+    '}');
+    this.invalidLogin4 = JSON.parse('{' +
+    '"email": 45,' +
+    '"password": "password12345"' +
+    '}');
+    this.invalidLogin5 = JSON.parse('{' +
+    '"email": [],' +
+    '"password": "password12345"' +
+    '}');
     this.validLogin = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
     '"password": "password12345"' +
     '}');
-    this.invalidLoginArray = [this.invalidLogin1, this.invalidLogin2];
+    this.invalidLoginArray = [this.invalidLogin1, this.invalidLogin2, this.invalidLogin3,
+      this.invalidLogin4, this.invalidLogin5];
 
     this.validAddFavorite = JSON.parse('{' +
     '"email": "juanasanchez@gmail.com",' +
