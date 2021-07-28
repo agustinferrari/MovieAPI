@@ -1,9 +1,15 @@
 class Validator {
   isValidUser(parsedObject) {
-    const hasProperties = 'email' in parsedObject && 'firstName' in parsedObject &&
-        'lastName' in parsedObject && 'password' in parsedObject;
-    const hasValidProperties = hasProperties && this.isValidEmail(parsedObject.email) &&
-        parsedObject.firstName && parsedObject.lastName &&parsedObject.password;
+    const requiredProperties = ['email', 'firstName', 'lastName', 'password'];
+    let hasRequiredStringProperties = true;
+    for (let i = 0; hasRequiredStringProperties && i<requiredProperties.length; i++) {
+      hasRequiredStringProperties = hasRequiredStringProperties &&
+      requiredProperties[i] in parsedObject &&
+      typeof parsedObject[requiredProperties[i]] == 'string' &&
+      parsedObject[requiredProperties[i]];
+    }
+    const hasValidProperties = hasRequiredStringProperties &&
+    this.isValidEmail(parsedObject.email);
     return hasValidProperties;
   }
 

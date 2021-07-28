@@ -47,6 +47,36 @@ class ValidatorTestData {
       '"lastName": "Sanchez",' +
       '"password": ""' +
     '}');
+    this.invalidUser9 = JSON.parse('{' +
+    '"email": 23,' +
+    '"firstName": "Juana",' +
+    '"lastName": "Sanchez",' +
+    '"password": "password12345"' +
+  '}');
+    this.invalidUser10 = JSON.parse('{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '"firstName": 4,' +
+    '"lastName": "Sanchez",' +
+    '"password": "password12345"' +
+  '}');
+    this.invalidUser11 = JSON.parse('{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '"firstName": "Juana",' +
+    '"lastName": 7,' +
+    '"password": "password12345"' +
+  '}');
+    this.invalidUser12 = JSON.parse('{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '"firstName": "Juana",' +
+    '"lastName": "Sanchez",' +
+    '"password": 355' +
+  '}');
+    this.invalidUser13 = JSON.parse('{' +
+    '"email": "juanasanchez@gmail.com",' +
+    '"firstName": "Juana",' +
+    '"lastName": "Sanchez",' +
+    '"password": {"date" : 355}' +
+  '}');
     this.validUser = JSON.parse('{' +
       '"email": "juanasanchez@gmail.com",' +
       '"firstName": "Juana",' +
@@ -55,7 +85,9 @@ class ValidatorTestData {
     '}');
     this.invalidUserArray = [this.invalidUser1, this.invalidUser2,
       this.invalidUser3, this.invalidUser4, this.invalidUser5,
-      this.invalidUser6, this.invalidUser7, this.invalidUser8];
+      this.invalidUser6, this.invalidUser7, this.invalidUser8,
+      this.invalidUser9, this.invalidUser10, this.invalidUser11,
+      this.invalidUser12, this.invalidUser13];
 
     this.invalidLogin1 = JSON.parse('{' +
       '"password": "password12345"' +
