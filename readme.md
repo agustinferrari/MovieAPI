@@ -11,8 +11,9 @@
   * [Get movies](#4-get-movies)
   * [Add favorites](#5-add-favorites)
   * [Get favorites](#6-get-favorites)
-  
-  
+
+* [Run Locally](#run-locally)
+ 
 
 --------
 
@@ -248,6 +249,38 @@ URL: http://localhost:3000/getFavorites
 | token | qEJKqHrYHcpCr5mgm7WS |
 | email | juanasanchez@gmail.com |
 
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://link-to-project
+```
+
+Go to the project directory
+
+```bash
+  cd my-project
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Paste your TheMovieDB API Key in userController constructor
+
+```js
+    this.movieDataAccess = new MovieDataAccess('<<Your API Key>>');
+```
+
+Start the server
+
+```bash
+  npm run start
+```
 
 ---
 [Back to top](#api-reference--endpoints)
