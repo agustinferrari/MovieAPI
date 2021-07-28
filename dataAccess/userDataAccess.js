@@ -1,9 +1,9 @@
 const fs = require('fs');
 
 class UserDataAccess {
-  constructor(pathToUserData, pathToFavoriteData) {
-    this.pathToUserData = pathToUserData;
-    this.pathToFavoriteData = pathToFavoriteData;
+  constructor() {
+    this.pathToUserData = './users.txt';
+    this.pathToFavoriteData = './favorites.txt';
   }
 
   readUserData() {

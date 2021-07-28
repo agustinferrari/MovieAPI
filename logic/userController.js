@@ -9,7 +9,7 @@ class UserController {
   constructor() {
     this.bcryptSaltRounds = 13;
     this.sessionArray = [];
-    this.userDataAccess = new UserDataAccess('./users.txt', './favorites.txt');
+    this.userDataAccess = new UserDataAccess();
     this.movieDataAccess = new MovieDataAccess('');
   }
 

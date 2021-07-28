@@ -8,7 +8,9 @@ let testData;
 
 beforeAll(() => {
   testData = new TestData();
-  userDataAccess = new UserDataAccess(pathToUsersFile, pathToFavoritesFile);
+  userDataAccess = new UserDataAccess();
+  userDataAccess.pathToUserData =pathToUsersFile;
+  userDataAccess.pathToFavoriteData =pathToFavoritesFile;
 });
 
 beforeEach(() => {
