@@ -273,7 +273,9 @@ Install dependencies
 Paste your TheMovieDB API Key in userController constructor
 
 ```js
-    this.movieDataAccess = new MovieDataAccess('<<Your API Key>>');
+    ...
+13  this.movieDataAccess = new MovieDataAccess('<<Your API Key>>');
+    }
 ```
 
 Start the server
