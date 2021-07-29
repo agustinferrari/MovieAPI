@@ -256,13 +256,13 @@ URL: http://localhost:3000/getFavorites
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/agustinferrari/MovieAPI
 ```
 
 Go to the project directory
 
 ```bash
-  cd my-project
+  cd MovieAPI
 ```
 
 Install dependencies
