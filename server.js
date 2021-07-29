@@ -22,6 +22,7 @@ function handleBadJSONError(middleware, req, res, next) {
   });
 }
 app.listen(3000);
+console.log('|Movie API| Listening to port 3000');
 
 app.get('/getMovies', async (req, res) => {
   const token = req.query.token;
