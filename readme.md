@@ -5,13 +5,16 @@
 
 * [API Reference / Endpoints](#api-reference--endpoints)
 
-  * [Add favorites](#1-add-favorites)
-  * [Get favorite movies](#2-get-favorite-movies)
-  * [Get movies by keyword](#3-get-movies-by-keyword)
-  * [Login registered user](#4-login-registered-user)
-  * [Logout](#5-logout)
-  * [Register user request](#6-register-user-request)
+  * [Register](#1-register)
+  * [Login](#2-login)
+  * [Logout](#3-logout)
+  * [Get movies](#4-get-movies)
+  * [Add favorites](#5-add-favorites)
+  * [Get favorites](#6-get-favorites)
 
+* [Run Locally](#run-locally)
+* [Running Tests](#running-tests)
+ 
 
 --------
 
@@ -20,7 +23,122 @@
 
 #### Brief description of the endpoints the API provides:
 
-### 1. Add favorites
+### 1. Register
+
+
+This enpoint allows a user to register himself, allowing him to login and access other API endpoints
+
+To send a request you'll need a **email**, **firstName**, **lastName**, and **password**.
+
+#### Example:
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost:3000/registerUser
+```
+
+
+
+***Body:***
+
+```js        
+{
+    "email": "juanasanchez@gmail.com",
+    "firstName": "Juana",
+    "lastName": "Sanchez",
+    "password": "password12345"
+}
+```
+
+### 2. Login
+
+
+This enpoint allows a user to login and receive a token, access the next API endpoints
+
+To send a request you'll need a **email**, and **password**.
+
+#### Example:
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost:3000/login
+```
+
+
+
+***Body:***
+
+```js        
+{
+    "email": "juanasanchez@gmail.com",
+    "password": "password12345"
+}
+```
+
+### 3. Logout
+
+
+This enpoint allows a user to logout, invalidating the token sent.
+
+To send a request you'll need the **token** only.
+
+#### Example:
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost:3000/logout
+```
+
+
+
+***Query params:***
+
+| Key | Value |
+| --- | ------|
+| token | qEJKqHrYHcpCr5mgm7WS |
+
+### 4. Get movies
+
+
+This enpoint allows a user to get 20 movies filtered by keyword from TheMovieDB, in case no keyword is sent, the api will return the most popular 20 movies. 
+
+To send a request you'll need the **token** and **keyword (optional)**.
+
+
+#### Example:
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: RAW
+URL: http://localhost:3000/getMovies
+```
+
+
+
+***Query params:***
+
+| Key | Value |
+| --- | ------|
+| token | qEJKqHrYHcpCr5mgm7WS |
+| keyword | uruguay |
+
+
+### 5. Add favorites
 
 
 This enpoint allows an authenticated user to add favorites movies to certain user, identified by its mail.
@@ -105,7 +223,7 @@ URL: http://localhost:3000/addFavorites
 
 
 
-### 2. Get favorite movies
+### 6. Get favorites
 
 
 This enpoint allows a user to get his favorite movies.
@@ -133,129 +251,49 @@ URL: http://localhost:3000/getFavorites
 | email | juanasanchez@gmail.com |
 
 
+## Run Locally
 
-### 3. Get movies by keyword
-
-
-This enpoint allows a user to get 20 movies filtered by keyword from TheMovieDB, in case no keyword is sent, the api will return the most popular 20 movies. 
-
-To send a request you'll need the **token** and **keyword (optional)**.
-
-
-#### Example:
-
-
-***Endpoint:***
+Clone the project
 
 ```bash
-Method: GET
-Type: RAW
-URL: http://localhost:3000/getMovies
+  git clone https://github.com/agustinferrari/MovieAPI
 ```
 
-
-
-***Query params:***
-
-| Key | Value |
-| --- | ------|
-| token | qEJKqHrYHcpCr5mgm7WS |
-| keyword | uruguay |
-
-
-
-### 4. Login registered user
-
-
-This enpoint allows a user to login and receive a token, access the next API endpoints
-
-To send a request you'll need a **email**, and **password**.
-
-#### Example:
-
-
-***Endpoint:***
+Go to the project directory
 
 ```bash
-Method: POST
-Type: RAW
-URL: http://localhost:3000/login
+  cd MovieAPI
 ```
 
-
-
-***Body:***
-
-```js        
-{
-    "email": "juanasanchez@gmail.com",
-    "password": "password12345"
-}
-```
-
-
-
-### 5. Logout
-
-
-This enpoint allows a user to logout, invalidating the token sent.
-
-To send a request you'll need the **token** only.
-
-#### Example:
-
-
-***Endpoint:***
+Install dependencies
 
 ```bash
-Method: POST
-Type: RAW
-URL: http://localhost:3000/logout
+  npm install
 ```
 
+Paste your TheMovieDB API Key in userController constructor
 
+```js
+    ...
+13  this.movieDataAccess = new MovieDataAccess('<<Your API Key>>');
+    }
+```
 
-***Query params:***
-
-| Key | Value |
-| --- | ------|
-| token | qEJKqHrYHcpCr5mgm7WS |
-
-
-
-### 6. Register user request
-
-
-This enpoint allows a user to register himself, allowing him to login and access other API endpoints
-
-To send a request you'll need a **email**, **firstName**, **lastName**, and **password**.
-
-#### Example:
-
-
-***Endpoint:***
+Start the server
 
 ```bash
-Method: POST
-Type: RAW
-URL: http://localhost:3000/registerUser
+  npm run start
 ```
 
 
+## Running Tests
 
-***Body:***
+To run tests, run the following command
 
-```js        
-{
-    "email": "juanasanchez@gmail.com",
-    "firstName": "Juana",
-    "lastName": "Sanchez",
-    "password": "password12345"
-}
+```bash
+  npm run test
 ```
-
-
-
 ---
-[Back to top](#api-reference--endpoints)
+[Back to top](#movieapi)
+
 Generated by [docgen](https://github.com/thedevsaddam/docgen)
