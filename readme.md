@@ -14,7 +14,7 @@
 
 * [Run Locally](#run-locally)
 * [Running Tests](#running-tests)
- 
+* [Documentation](https://github.com/agustinferrari/MovieAPI/blob/master/documentation/documentation.pdf) 
 
 --------
 
